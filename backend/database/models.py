@@ -21,7 +21,6 @@ def setup_db(app):
     
     db.app = app
     db.init_app(app)
-    db.create_all()
 
     Migrate(app, db)
 
@@ -40,36 +39,45 @@ def db_drop_and_create_all():
 
 
 class Owner(db.Model):
+
+
+    # Owner("AlAnoud","AlBattah","", "alanoudalbattah@outlook.com", "054211111", "23").insert()
+
     __tablename__ = 'owner'
     id = db.Column(db.Integer, primary_key=True)
     
     first_name = db.Column(db.String, nullable=False, unique=True)
     last_name = db.Column(db.String, nullable=False, unique=True)
-    image_link = db.Column(db.String(500))
+    avatar = db.Column(db.String(500))
     email = db.Column(db.String(120))
     mobile = db.Column(db.String(120))
     age = db.Column(db.String(120), nullable=False)
 
     ''' relationship '''
     # Owner:Cat One-To-Many (1:M) Bidirectional relationship
-    cat = db.relationship("Cat", back_populates=("owner"))
+    #adopted_cats = db.relationship("Cat", backref="cat_owner")
+    
     # Owner:Interview One-To-Many (1:M) Bidirectional relationship
-    interview = db.relationship("Adoption_Interview", back_populates=("owner"))
+    #interviews_with = db.relationship("Adoption_Interview", backref="potential_owner")
 
-    def __init__(self, first_name, last_name, image_link, email, mobile, age):
+    def __init__(self, first_name, last_name, avatar, email, mobile, age):
         self.first_name = first_name
         self.last_name = last_name
-        self.image_link = image_link
+        self.avatar = avatar
         self.email = email
         self.mobile = mobile
         self.age = age
+
+    def __repr__(self):
+        return f'<Owner {self.id} {self.first_name} {self.last_name}>'
+
 
     def details(self):
         return {
             'id': self.id,
             'first_name': self.first_name,
             'last_name': self.last_name,
-            'image': self.image_link,
+            'avatar': self.avatar,
             'email': self.email,
             'mobile': self.mobile,
             'age': self.age,
@@ -86,29 +94,35 @@ class Owner(db.Model):
     def update(self):
         db.session.commit()
 
-
+# the Breed is a table not attribute to apply 2nd normal form :) 
+# src: https://www.geeksforgeeks.org/second-normal-form-2nf/ 
 class Breed(db.Model):
     __tablename__ = 'breed'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), unique=True)
-    location_of_origin = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
+
+    # from app import create_app, db, Breed, Cat, Owner, Adoption_Interview
+    # create_app().app_context().push
+    # db.create_all()
+    # Breed("some name2","some img").insert()
 
     ''' relationships '''
     # Breed:Cat One-To-Many (1:M) 
-    cats = db.relationship("Cat", backref="breed", cascade="all, delete")
+    #cats = db.relationship("Cat", backref="breed", lazy=True, cascade="all, delete")
     #? CASCADE ALL, DELETE to delete the children (Shows) automatically before deleting the parent
 
-    def __init__(self, name, location_of_origin, image_link):
+    def __init__(self, name, image_link):
         self.name = name
-        self.location_of_origin = location_of_origin
         self.image_link = image_link
+
+    def __repr__(self):
+        return f'<Breed {self.id} {self.name}>'
 
     def details(self):
         return {
             'id': self.id,
             'name': self.name,
-            'location_of_origin': self.location_of_origin,
             'image': self.image_link,
         }
 
@@ -125,12 +139,15 @@ class Breed(db.Model):
 
 
 class Cat(db.Model):
+
+    # Cat("Hamoosh","https://catunited.com/wp-content/uploads/2020/03/2-1.png","12","Male",true,true,"Likes to play with a lazer :)").insert()
+
     __tablename__ = 'cat'
     id = db.Column(db.Integer, primary_key=True)
     
     name = db.Column(db.String(120), nullable=False)
     image_link = db.Column(db.String(500))
-    age = db.Column(db.Integer, nullable=False)
+    age_in_months = db.Column(db.Integer, nullable=False)
     gender = db.Column(db.String(120), nullable=False)
     vaccinated = db.Column(db.Boolean(), default=False)
     letter_box_trained = db.Column(db.Boolean(), default=False)
@@ -139,28 +156,37 @@ class Cat(db.Model):
     ''' relationships '''
     # Cat:Breed Many-To-One (M:1) 
     breed_id = db.Column(db.Integer, db.ForeignKey('breed.id'))
+    breed = db.relationship("Breed", backref="cat")
     # Cat:Interview One-To-One (1:1)
-    interview = db.relationship("Adoption_Interview", back_populates="cat")
+    interview_id = db.Column(db.Integer, db.ForeignKey('interview.id'))
+    interviews_for = db.relationship("Adoption_Interview", backref=db.backref("cat_2b_adopted", uselist=False))
+
     # Cat:Owner Many-To-One (M:1)
     owner_id = db.Column(db.Integer, db.ForeignKey('owner.id'))
+    cat_owner = db.relationship("Owner", backref="adopted_cat")
 
 
 
-    def __init__(self, name, image_link, age, gender, vaccinated, letter_box_trained, note):
+    def __init__(self, name, image_link, age_in_months, gender, vaccinated, letter_box_trained, note):
         self.name = name
         self.image_link = image_link
-        self.age = age
+        self.age_in_months = age_in_months
         self.gender = gender
         self.vaccinated = vaccinated
         self.letter_box_trained = letter_box_trained
         self.note = note
 
+
+    def __repr__(self):
+        return f'<Breed {self.id} {self.name}>'
+
+
     def details(self):
         return {
             'id': self.id,
             'name': self.name,
-            'image': self.image_link,
-            'age': self.age,
+            'image_link': self.image_link,
+            'age_in_months': self.age_in_months,
             'gender': self.gender,
             'vaccinated': self.vaccinated,
             'letter_box_trained': self.letter_box_trained,
@@ -190,21 +216,28 @@ class Adoption_Interview(db.Model):
 
     ''' relationships '''
     # Interview:Cat One-To-One (1:1) Parent.child uselist src: https://docs.sqlalchemy.org/en/14/orm/relationship_api.html
-    cat_id = db.Column(db.Integer, db.ForeignKey('cat.id'), nullable=False)
-    cat = db.relationship("Cat", back_populates="interview", uselist=False)
+    # cat_id = db.Column(db.Integer, db.ForeignKey('cat.id'), nullable=False)
+    # cat_2b_adopted = db.relationship("Cat", backref="interviews_for")
+
     # Interview:Owner Many-To-One (M:1) Bidirectional behavior is added :)
-    owner = db.relationship("Owner", back_populates="interview")
+    owner_id = db.Column(db.Integer, db.ForeignKey('owner.id'), nullable=False)
+    potential_owner = db.relationship("Owner", backref="interviews")
     
 
     def __init__(self, date, time):
         self.date = date
         self.time = time
 
+    def __repr__(self):
+        return f'<Adoption_Interview {self.id} {self.cat_2b_adopted} {self.cat_2b_adopted} {self.date} {self.time}>'
+
     def details(self):
         return {
             'id': self.id,
             'date': self.date,
             'time': self.time,
+            'cat':self.cat_id,
+            'owner': self.owner_id,
         }
 
     def insert(self):

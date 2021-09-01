@@ -1,7 +1,10 @@
 from flask import Flask, request, abort, jsonify
 from flask_cors import CORS
 
-from database.models import setup_db, db, Owner, Breed, Cat, Adoption_Interview 
+from database.models import (
+ setup_db, db_drop_and_create_all, db,
+ Owner, Breed, Cat, Adoption_Interview 
+)
 
 def create_app():
   # create and configure the app
@@ -9,15 +12,15 @@ def create_app():
   setup_db(app)
   CORS(app)
   
-
   """ uncomment at the first time running the app """
     #db_drop_and_create_all()
 
 
   @app.route('/', methods=['GET'])
-  def healthy(): return jsonify({"status":"healthy"}),200
+  def healthy(): 
+    return jsonify({"status":"Healthy"}),200
 
-  #TODO: Endpoints will include at least…
+  #TODO: Endpoints will include at least
     # Two GET requests
     # One POST request
     # One PATCH request
@@ -29,7 +32,7 @@ def create_app():
 
   @app.route('/Interview', methods=['GET'])
   def view_upcoming_interviews():
-    return jsonify({})#({'pets': [Adoption_Interview.details() for interview in Adoption_Interview.query.all()]}), 200
+    return jsonify({'pets': [Adoption_Interview.details() for interview in Adoption_Interview.query.all()]}), 200
 
   @app.route('/Cat', methods=['POST'])
   def post_Cat_information():
