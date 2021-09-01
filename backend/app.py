@@ -1,11 +1,7 @@
 from flask import Flask, request, abort, jsonify
-from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-from flask_migrate import Migrate
 
-from database.models import setup_db, db
-from database.models.pet import Cat
-from database.models.interview import Adoption_Interview
+from database.models import setup_db, db, Owner, Breed, Cat, Adoption_Interview 
 
 def create_app():
   # create and configure the app
@@ -33,18 +29,18 @@ def create_app():
 
   @app.route('/Interview', methods=['GET'])
   def view_upcoming_interviews():
-    return jsonify({'pets': [Adoption_Interview.details() for interview in Adoption_Interview.query.all()]}), 200
+    return jsonify({})#({'pets': [Adoption_Interview.details() for interview in Adoption_Interview.query.all()]}), 200
 
   @app.route('/Cat', methods=['POST'])
-  def Post_Cat_information():
+  def post_Cat_information():
     return jsonify({''}), 201
 
   @app.route('/Cat', methods=['PATCH'])
-  def Cat_information():
+  def view_cat_information():
     return jsonify({''}), 204 # 200 (OK) or 204 (No Content)
   
   @app.route('/Cat', methods=['DELETE'])
-  def Cat_information():
+  def delete_Cat_information():
     return jsonify({''}), 200
 
 
