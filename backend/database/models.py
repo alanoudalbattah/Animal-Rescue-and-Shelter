@@ -3,6 +3,12 @@ from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
+
+ # TODO: Models will include at least… 
+ # Two classes with primary keys at at least two attributes each ✅
+ # [Optional but encouraged] One-to-many or many-to-many relationships between classes ✅
+ # src: https://docs.sqlalchemy.org/en/14/orm/basic_relationships.html for relationships :)
+
 '''
 setup_db(app):
     binds a flask application and a SQLAlchemy service
@@ -14,9 +20,7 @@ def setup_db(app):
 
     #? DATABASE_URL is the Heroku database URL, which will be generated with Heroku command and saved in setup.sh file
     #? With os.getenv(), if DATABASE_URL is empty, it will get default_data_path directly
-    database_path = os.getenv('DATABASE_URL', default_database_path)
-
-    app.config["SQLALCHEMY_DATABASE_URI"] = database_path
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv('DATABASE_URL', default_database_path)
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     
     db.app = app
@@ -26,23 +30,16 @@ def setup_db(app):
 
 '''
     drops the database tables and starts fresh
-    can be used to initialize a clean database
 '''
 def db_drop_and_create_all():
     db.drop_all()
     db.create_all()
 
- # TODO: Models will include at least… 
- # Two classes with primary keys at at least two attributes each ✅
- # [Optional but encouraged] One-to-many or many-to-many relationships between classes ✅
- # src: https://docs.sqlalchemy.org/en/14/orm/basic_relationships.html for relationships :)
 
-
+'''
+    ...
+'''
 class Owner(db.Model):
-
-
-    # Owner("AlAnoud","AlBattah","", "alanoudalbattah@outlook.com", "054211111", "23").insert()
-
     __tablename__ = 'owner'
     id = db.Column(db.Integer, primary_key=True)
     
@@ -54,11 +51,8 @@ class Owner(db.Model):
     age = db.Column(db.String(120), nullable=False)
 
     ''' relationship '''
-    # Owner:Cat One-To-Many (1:M) Bidirectional relationship
-    #adopted_cats = db.relationship("Cat", backref="cat_owner")
-    
-    # Owner:Interview One-To-Many (1:M) Bidirectional relationship
-    #interviews_with = db.relationship("Adoption_Interview", backref="potential_owner")
+    # Owner:Pet One-To-Many (1:M) 
+    # Owner:Interview One-To-Many (1:M) 
 
     def __init__(self, first_name, last_name, avatar, email, mobile, age):
         self.first_name = first_name
@@ -94,36 +88,30 @@ class Owner(db.Model):
     def update(self):
         db.session.commit()
 
-# the Breed is a table not attribute to apply 2nd normal form :) 
-# src: https://www.geeksforgeeks.org/second-normal-form-2nf/ 
-class Breed(db.Model):
-    __tablename__ = 'breed'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), unique=True)
-    image_link = db.Column(db.String(500))
 
-    # from app import create_app, db, Breed, Cat, Owner, Adoption_Interview
-    # create_app().app_context().push
-    # db.create_all()
-    # Breed("some name2","some img").insert()
+'''
+    ...
+    in the meantime Specie has only one tuple --> Cat
+    However, this class has been created because pet can be either dog or cat.
+'''
+class Specie(db.Model):
+    __tablename__ = 'specie'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), unique=True, nullable=False)
 
     ''' relationships '''
-    # Breed:Cat One-To-Many (1:M) 
-    #cats = db.relationship("Cat", backref="breed", lazy=True, cascade="all, delete")
-    #? CASCADE ALL, DELETE to delete the children (Shows) automatically before deleting the parent
+    # Specie:Breed One-To-Many (1:M) 
 
-    def __init__(self, name, image_link):
+    def __init__(self, name):
         self.name = name
-        self.image_link = image_link
 
     def __repr__(self):
-        return f'<Breed {self.id} {self.name}>'
+        return f'<Specie {self.id} {self.name}>'
 
     def details(self):
         return {
             'id': self.id,
-            'name': self.name,
-            'image': self.image_link,
+            'name': self.name
         }
 
     def insert(self):
@@ -137,34 +125,80 @@ class Breed(db.Model):
     def update(self):
         db.session.commit()
 
+'''
+    ...
+'''
+# the Breed is a table not attribute to apply 2nd normal form :) 
+# src: https://www.geeksforgeeks.org/second-normal-form-2nf/ 
+class Breed(db.Model):
+    __tablename__ = 'breed'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), unique=True, nullable=False)
+    image_link = db.Column(db.String(500))
 
-class Cat(db.Model):
+    # CLI Example
+    # from app import create_app, db, Breed, Pet, Owner, Adoption_Interview, Specie
+    # create_app().app_context().push
+    # db.create_all()
+    # Breed("some name2","some img").insert()
 
-    # Cat("Hamoosh","https://catunited.com/wp-content/uploads/2020/03/2-1.png","12","Male",true,true,"Likes to play with a lazer :)").insert()
+    ''' relationships '''
+    # Breed:Specie Many-To-One (M:1) 
+    specie_id = db.Column(db.Integer, db.ForeignKey('specie.id'), nullable=False)
+    specie = db.relationship("Specie", backref="specie")
+    # Breed:Pet One-To-Many (1:M) 
 
-    __tablename__ = 'cat'
+    def __init__(self, name, image_link):
+        self.name = name
+        self.image_link = image_link
+
+    def __repr__(self):
+        return f'<Breed {self.id} {self.name}>'
+
+    def details(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'image': self.image_link,
+            'specie_id': self.specie_id,
+        }
+
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    def update(self):
+        db.session.commit()
+
+'''
+    ...
+'''
+class Pet(db.Model):
+    __tablename__ = 'pet'
     id = db.Column(db.Integer, primary_key=True)
     
-    name = db.Column(db.String(120), nullable=False)
-    image_link = db.Column(db.String(500))
+    name = db.Column(db.String(120), nullable=False, unique=True)
+    image_link = db.Column(db.String(500), nullable=False)
     age_in_months = db.Column(db.Integer, nullable=False)
     gender = db.Column(db.String(120), nullable=False)
-    vaccinated = db.Column(db.Boolean(), default=False)
-    letter_box_trained = db.Column(db.Boolean(), default=False)
+    vaccinated = db.Column(db.Boolean(), default=False, nullable=False)
+    letter_box_trained = db.Column(db.Boolean(), default=False, nullable=False)
     note = db.Column(db.String(400))
 
     ''' relationships '''
-    # Cat:Breed Many-To-One (M:1) 
+    # Pet:Breed Many-To-One (M:1) 
     breed_id = db.Column(db.Integer, db.ForeignKey('breed.id'))
-    breed = db.relationship("Breed", backref="cat")
-    # Cat:Interview One-To-One (1:1)
+    breed = db.relationship("Breed", backref="pet")
+    # Pet:Interview One-To-One (1:1)
     interview_id = db.Column(db.Integer, db.ForeignKey('interview.id'))
-    interviews_for = db.relationship("Adoption_Interview", backref=db.backref("cat_2b_adopted", uselist=False))
-
-    # Cat:Owner Many-To-One (M:1)
+    interviews_for = db.relationship("Adoption_Interview", backref=db.backref("pet_2b_adopted", uselist=False))
+    # Pet:Owner Many-To-One (M:1)
     owner_id = db.Column(db.Integer, db.ForeignKey('owner.id'))
-    cat_owner = db.relationship("Owner", backref="adopted_cat")
-
+    pet_owner = db.relationship("Owner", backref="adopted_pet")
 
 
     def __init__(self, name, image_link, age_in_months, gender, vaccinated, letter_box_trained, note):
@@ -206,7 +240,9 @@ class Cat(db.Model):
     def update(self):
         db.session.commit()
 
-
+'''
+    ...
+'''
 class Adoption_Interview(db.Model):
     __tablename__ = 'interview'
 
@@ -215,11 +251,9 @@ class Adoption_Interview(db.Model):
     time = db.Column(db.Time)
 
     ''' relationships '''
-    # Interview:Cat One-To-One (1:1) Parent.child uselist src: https://docs.sqlalchemy.org/en/14/orm/relationship_api.html
-    # cat_id = db.Column(db.Integer, db.ForeignKey('cat.id'), nullable=False)
-    # cat_2b_adopted = db.relationship("Cat", backref="interviews_for")
+    # Interview:Pet One-To-One (1:1) Parent.child uselist src: https://docs.sqlalchemy.org/en/14/orm/relationship_api.html
+    # Interview:Owner Many-To-One (M:1) 
 
-    # Interview:Owner Many-To-One (M:1) Bidirectional behavior is added :)
     owner_id = db.Column(db.Integer, db.ForeignKey('owner.id'), nullable=False)
     potential_owner = db.relationship("Owner", backref="interviews")
     
@@ -229,14 +263,14 @@ class Adoption_Interview(db.Model):
         self.time = time
 
     def __repr__(self):
-        return f'<Adoption_Interview {self.id} {self.cat_2b_adopted} {self.cat_2b_adopted} {self.date} {self.time}>'
+        return f'<Adoption_Interview {self.id} {self.pet_2b_adopted} {self.pet_2b_adopted} {self.date} {self.time}>'
 
     def details(self):
         return {
             'id': self.id,
             'date': self.date,
             'time': self.time,
-            'cat':self.cat_id,
+            'pet':self.pet_id,
             'owner': self.owner_id,
         }
 
