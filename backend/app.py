@@ -112,7 +112,7 @@ def create_app():
     if 'breed' in body:
       search_term = body.get('breed')
       breed = Breed.query.filter(Breed.name.ilike(f'%{search_term}%')).first()# search is case insensitive :)  
-      if not(breed): abort(404)
+      if not(breed): abort(400, description="breed name not avalible, please create one")
       
     # required pet informations
     required_data = [
@@ -232,7 +232,7 @@ def create_app():
         breed = Breed.query.filter(Breed.name.ilike(f'%{breedName}%')).first()# search is case insensitive :)  
         if not (breed): abort(400, description='breed name is incorrect')
         # if it exists ...
-        pet.breed = breedName
+        pet.breed = breed
 
       #only update whats provided on the body
       if ('name' in body): 
@@ -304,7 +304,7 @@ def create_app():
     @TODO This Endpoint View, Update, or Delete a specie 
         - body - PATCH only
         {
-            "specie": "Catttttt"
+            "name": "Catttttt"
         }
 
   '''
@@ -316,9 +316,10 @@ def create_app():
 
     if request.method == "PATCH": 
       
-      if ('specie' in body): 
-        specie.name = body.get('name')
-      else: abort(400, description='specie is not included in the body')
+      if not ('name' in body): abort(400, description='specie is not included in the body')
+      
+      specie.name = body.get('name')
+       
 
       try:
           specie.update()

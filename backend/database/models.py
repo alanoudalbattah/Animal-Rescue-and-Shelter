@@ -191,7 +191,7 @@ class Pet(db.Model):
 
     ''' relationships '''
     # Pet:Breed Many-To-One (M:1) 
-    breed_id = db.Column(db.Integer, db.ForeignKey('breed.id'))
+    breed_id = db.Column(db.Integer, db.ForeignKey('breed.id'), nullable=False)
     breed = db.relationship("Breed", backref="pet")
     # Pet:Interview One-To-One (1:1)
     interview_id = db.Column(db.Integer, db.ForeignKey('interview.id'))
@@ -224,7 +224,9 @@ class Pet(db.Model):
             'gender': self.gender,
             'vaccinated': self.vaccinated,
             'letter_box_trained': self.letter_box_trained,
-            'note': self.note
+            'note': self.note,
+            'breed_id': self.breed_id,
+            'breed_name': self.breed.name,
         }
 
     def insert(self):
