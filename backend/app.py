@@ -1,9 +1,8 @@
 from flask import Flask, request, abort, jsonify, flash
 from flask_cors import CORS
-
 from database.models import (
  setup_db, db_drop_and_create_all, db,
- Owner, Adoption_Interview, 
+ User, Adoption_Interview, 
  Specie, Breed, Pet,
 )
 
@@ -14,7 +13,7 @@ def create_app():
   CORS(app)
   
   """ uncomment at the first time running the app """
-    #db_drop_and_create_all()
+  #db_drop_and_create_all()
 
 
   @app.route('/', methods=['GET'])
@@ -22,10 +21,10 @@ def create_app():
     return jsonify({"status":"Healthy"}),200
   
   #TODO: Endpoints will include at least
-    # Two GET requests 
-    # One POST request 
-    # One PATCH request 
-    # One DELETE request 
+    # Two GET requests      ✔️
+    # One POST request      ✔️
+    # One PATCH request     ✔️
+    # One DELETE request    ✔️
   
 
   ''' ALL ALL ALL ALL ALL ALL ALL ALL ALL ALL ALL ALL ALL ALL ALL ALL ALL ALL ALL ALL ALL ALL'''
@@ -34,9 +33,11 @@ def create_app():
   def view_all_pets():
     return jsonify({'pets': [Pet.details(cat) for cat in Pet.query.all()]}), 200
   
-
+  #! This route is not functional or implemented in the maintime
+  #! left undeleted for future implementations. :)
   @app.route('/search', methods=['POST'])
   def search():
+    #! --
 
     # by Breed
 
@@ -53,22 +54,90 @@ def create_app():
 
   ''' OWNER OWNER OWNER OWNER OWNER OWNER OWNER OWNER OWNER OWNER OWNER OWNER OWNER OWNER OWNER '''
   ''' Role --> only registered users can view '''
+  
+  
+  '''
+  @TODO This Endpoint handles Viewing all interviews for a specific user 
+       
+  '''
+  #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  # @app.route('/interview/<int:_user_id>', methods=['GET'])
+  # def display_user_interviews(_user_id):
+
+  #   user = User.query.get_or_404(_user_id)
+
+  #   user.interviews
+
+  #   return jsonify({"interviews":[ for interview in ()]}), 200
+
   '''
   @TODO This Endpoint Creates a new interview 
         - body
         {
-            "something": "something",
+            "pet_id": 0,
+            "user_id": 0,
         }
   '''
-  @app.route('/Interviews', methods=['POST'])
-  def book_interviews():
-    #! --
-    return jsonify({}), 201
+  @app.route('/interview', methods=['POST'])
+  def book_interview():
+    body = request.get_json()
+    
+    # check if required fields are present
+    if not ('pet_id' in body or 'user_id' in body): 
+      abort(400, description="pet or user are missing")
 
-  @app.route('/Interviews', methods=['GET', 'PATCH', 'DELETE'])
-  def view_upcoming_interviews(interview_id):
-    return jsonify({}), 200
+    # from body take the id valued
+    pet_id = request.get('pet_id')
+    user_id = request.get('user_id')
 
+    # fetch instance from db
+    pet = Pet.query.get(pet_id)
+    user = User.query.get(user_id)
+
+    # check if both instance exists
+    if not (pet or user): abort(400, description="pet or user are missing")
+
+    # ! Fill here insted of date and time 
+    new_interview = Adoption_Interview("date","time")
+    new_interview.potential_owner = user
+    new_interview.pet_2b_adopted = pet
+
+    try:
+      new_interview.insert()
+    except: abort(400, description="a constraint has been violated")
+    
+    return jsonify({"new_interview":new_interview.details()}), 201
+  '''
+  @TODO This Endpoint handles Viewing, updating, and deleting the interview 
+       
+  '''
+  @app.route('/interview/<int:_id>', methods=['GET', 'PATCH', 'DELETE'])
+  def view_upcoming_interviews(_id):
+    
+    interview = Adoption_Interview.query.get_or_404(_id)
+
+    if request.method == "PATCH": 
+
+      body = request.get_json()
+      if ('date' in body): 
+        interview.date = body.get('date')
+      if ('date' in body): 
+        interview.time = body.get('time')
+
+      try:
+          interview.update()
+      except:
+          # unique name constraint violation
+          abort(400, description='constraint violation could not be updated')
+
+      return jsonify({'interview updated':interview.details()}), 200
+
+    elif request.method == "DELETE":
+      interview.delete()
+      return jsonify({'interview_id':_id}), 200
+    
+    else: return jsonify({"interview details":interview.details()}), 200
+    
 
 
   ''' CAT CAT CAT CAT CAT CAT CAT CAT CAT CAT CAT CAT CAT CAT CAT CAT CAT CAT CAT CAT CAT CAT '''
@@ -81,11 +150,11 @@ def create_app():
 
   
   '''
-  @TODO This Endpoint view all previous and upcomming
+  @TODO This Endpoint view all previous and upcomming interviews
   '''
   @app.route('/all-Interviews', methods=['GET'])
   def view_all_interviews():
-    return jsonify({}), 200
+    return jsonify({'all interviews': [Adoption_Interview.details(interview) for interview in Adoption_Interview.query.all()]}), 200
 
 
 
@@ -298,7 +367,7 @@ def create_app():
       breed.delete()
       return jsonify({"breed_id":_id}), 200
 
-    else: return jsonify({}), 200
+    else: return jsonify({"breed details":breed.details()}), 200
   
   ''' 
     @TODO This Endpoint View, Update, or Delete a specie 
@@ -331,9 +400,35 @@ def create_app():
       specie.delete()
       return jsonify({"specie_id":_id}), 200
 
-    else: return jsonify({}), 200
+    else: return jsonify({"specie details":specie.details()}), 200
 
     
+
+  ''' 
+    @TODO This Endpoint Views all adopted pets
+
+  '''
+  @app.route('/all-adopted-pets', methods=['GET'])
+  def view_all_adopted_pets():
+      return jsonify({'adopted pets': [Pet.details(pet) for pet in Pet.query.all() if pet.pet_owner != None]}), 200
+
+  ''' 
+    @TODO This Endpoint Views all breeds
+
+  '''
+  @app.route('/all-breeds', methods=['GET'])
+  def view_all_breed():
+      return jsonify({'all breeds': [Breed.details(b) for b in Breed.query.all()]}), 200
+
+  ''' 
+    @TODO This Endpoint Views all speices
+
+  '''
+  @app.route('/all-species', methods=['GET'])
+  def view_all_specie():
+      return jsonify({'all species': [Specie.details(s) for s in Specie.query.all()]}), 200
+
+
 
 
   ''' Error Handling '''

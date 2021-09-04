@@ -9,7 +9,7 @@ API_AUDIENCE = 'developer'
 * User
 * Manager
 ## Permission
-A total of 18 permissions are specified:
+A total of 20 permissions are specified:
 * Creation permissions
   - can `post:interview`
   - can `post:pet`
@@ -17,11 +17,12 @@ A total of 18 permissions are specified:
   - can `post:specie`
 * Viewing permissions
   - can `get:interviews`
-  - can `get:pets-detail`
+  - can `get:interview`
+  - can `get:pet`
   - can `get:all-adopted-pets`
   - can `get:all-Interviews`
-  - can `get:all-breed`
-  - can `get:all-specie`
+  - can `get:all-breeds`
+  - can `get:all-species`
 * Updating permissions
   - can `patch:interview`
   - can `patch:pet`
@@ -33,49 +34,42 @@ A total of 18 permissions are specified:
   - can `delete:breed`
   - can `delete:specie`
 ## RBAC permission claims
-`get:pets-detail` is apointed to both the User and the Shelter's Manager.
-* All
-  - can `get:all-pets`
-  - can `get:search`
-  - can `get:/`
-* User
-  - can `get:interviews`
+### User:
+
   - can `post:interview`
-  - can `get:pets-detail`
-  - can `patch:interview`
-  - can `delete:interview`
-* Manager
-  - can `post:pet` ✔️
-  - can `post:specie` ✔️
-  - can `post:breed` ✔️
-  - can `get:pet`✔️
+  - can `get:interviews`
+  - can `get:interview`✔️✔️<-- test
+  - can `get:pet`✔️✔️
+  - can `patch:interview`✔️✔️ <-- test
+  - can `delete:interview`✔️✔️ <-- test
+
+### Manager:
+can do what the user can do, additionally:
+
+  - can `post:pet` 
+  - can `post:specie`
+  - can `post:breed` 
+  - can `get:pet`
   - can `get:all-adopted-pets`
   - can `get:all-Interviews`
-  - can `get:all-breed`
-  - can `get:all-specie`
-  - can `patch:pet`✔️
-  - can `patch:breed`✔️
-  - can `patch:specie`✔️
-  - can `delete:pet`✔️
-  - can `delete:breed`✔️
-  - can `delete:specie`✔️
-
-
-## The `@requres_auth` Decorator
-A custom @requires_auth decorator is completed in [`./auth.py`](./auth.py)
-##### Get the Authorization header from the request.
-##### Take an argument to describe the action (i.e., @require_auth(‘create:drink’).
-##### Decode and verify the JWT using the Auth0 secret.
-Raise an error if:
-- The token is expired.
-- The claims are invalid.
-- The token is invalid.
-- The JWT doesn’t contain the proper action (i.e. create: drink).
+  - can `get:all-breeds`
+  - can `get:all-species`
+  - can `patch:pet`
+  - can `patch:breed`
+  - can `patch:specie`
+  - can `delete:pet`
+  - can `delete:breed`
+  - can `delete:specie`
 
 
 ### Quality Assurance
 Endpoints were tested with [Postman](https://getpostman.com).
-   - Register 2 users - assign the Barista role to one and Manager role to the other.
+   - 2 users are registered one as a User and the other as a Manager.
+   
+   
+   
+   
+   
    - Sign into each account and make note of the JWT.
    - Import the postman collection `./ASR_RBAC.postman_collection.json`
    - Right-clicking the collection folder for barista and manager, navigate to the authorization tab, and including the JWT in the token field (you should have noted these JWTs).

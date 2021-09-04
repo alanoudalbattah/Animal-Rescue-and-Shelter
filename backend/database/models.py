@@ -5,8 +5,8 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
  # TODO: Models will include at least… 
- # Two classes with primary keys at at least two attributes each ✅
- # [Optional but encouraged] One-to-many or many-to-many relationships between classes ✅
+ # Two classes with primary keys at at least two attributes each ✔️
+ # [Optional but encouraged] One-to-many or many-to-many relationships between classes ✔️
  # src: https://docs.sqlalchemy.org/en/14/orm/basic_relationships.html for relationships :)
 
 '''
@@ -39,8 +39,8 @@ def db_drop_and_create_all():
 '''
     ...
 '''
-class Owner(db.Model):
-    __tablename__ = 'owner'
+class User(db.Model):
+    __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     
     first_name = db.Column(db.String, nullable=False, unique=True)
@@ -51,8 +51,15 @@ class Owner(db.Model):
     age = db.Column(db.String(120), nullable=False)
 
     ''' relationship '''
-    # Owner:Pet One-To-Many (1:M) 
-    # Owner:Interview One-To-Many (1:M) 
+    # User:Pet One-To-Many (1:M) 
+
+    #! not usefull in the meantime
+    # i will not make use of this attribute in the meantime due to limited time
+    # however i will keep this line and relationship commented here for future uses :)
+    # adopted_pets = db.relationship("Pet", backref="user")
+        
+    # User:Interview One-To-Many (1:M) 
+    interviews = db.relationship("Adoption_Interview", backref="user", cascade='all, delete')
 
     def __init__(self, first_name, last_name, avatar, email, mobile, age):
         self.first_name = first_name
@@ -63,7 +70,7 @@ class Owner(db.Model):
         self.age = age
 
     def __repr__(self):
-        return f'<Owner {self.id} {self.first_name} {self.last_name}>'
+        return f'<User {self.id} {self.first_name} {self.last_name}>'
 
 
     def details(self):
@@ -137,7 +144,7 @@ class Breed(db.Model):
     image_link = db.Column(db.String(500))
 
     # CLI Example
-    # from app import create_app, db, Breed, Pet, Owner, Adoption_Interview, Specie
+    # from app import create_app, db, Breed, Pet, User, Adoption_Interview, Specie
     # create_app().app_context().push
     # db.create_all()
     # Breed("some name2","some img").insert()
@@ -145,7 +152,7 @@ class Breed(db.Model):
     ''' relationships '''
     # Breed:Specie Many-To-One (M:1) 
     specie_id = db.Column(db.Integer, db.ForeignKey('specie.id'), nullable=False)
-    specie = db.relationship("Specie", backref="specie")
+    specie = db.relationship("Specie", backref="specie", cascade='all, delete')
     # Breed:Pet One-To-Many (1:M) 
 
     def __init__(self, name, image_link):
@@ -194,11 +201,10 @@ class Pet(db.Model):
     breed_id = db.Column(db.Integer, db.ForeignKey('breed.id'), nullable=False)
     breed = db.relationship("Breed", backref="pet")
     # Pet:Interview One-To-One (1:1)
-    interview_id = db.Column(db.Integer, db.ForeignKey('interview.id'))
-    interviews_for = db.relationship("Adoption_Interview", backref=db.backref("pet_2b_adopted", uselist=False))
-    # Pet:Owner Many-To-One (M:1)
-    owner_id = db.Column(db.Integer, db.ForeignKey('owner.id'))
-    pet_owner = db.relationship("Owner", backref="adopted_pet")
+    #* no need to implement anything here :)
+    # Pet:User Many-To-One (M:1)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    pet_owner = db.relationship("User", backref="user_pet")
 
 
     def __init__(self, name, image_link, age_in_months, gender, vaccinated, letter_box_trained, note):
@@ -227,6 +233,8 @@ class Pet(db.Model):
             'note': self.note,
             'breed_id': self.breed_id,
             'breed_name': self.breed.name,
+            'user_id': self.owner_id,
+            'owner_name': self.pet_owner.first_name+' '+self.pet_owner.last_name,
         }
 
     def insert(self):
@@ -253,11 +261,12 @@ class Adoption_Interview(db.Model):
     time = db.Column(db.Time)
 
     ''' relationships '''
-    # Interview:Pet One-To-One (1:1) Parent.child uselist src: https://docs.sqlalchemy.org/en/14/orm/relationship_api.html
-    # Interview:Owner Many-To-One (M:1) 
-
-    owner_id = db.Column(db.Integer, db.ForeignKey('owner.id'), nullable=False)
-    potential_owner = db.relationship("Owner", backref="interviews")
+    # Pet:Interview One-To-One (1:1) Parent.child uselist src: https://docs.sqlalchemy.org/en/14/orm/relationship_api.html
+    pet_id = db.Column(db.Integer, db.ForeignKey('pet.id'))
+    pet_2b_adopted = db.relationship("Pet", backref=db.backref("interview", uselist=False, cascade='all, delete'))
+    # Interview:User Many-To-One (M:1) 
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    potential_owner = db.relationship("User", backref="interviews", cascade='all, delete')
     
 
     def __init__(self, date, time):
@@ -265,7 +274,7 @@ class Adoption_Interview(db.Model):
         self.time = time
 
     def __repr__(self):
-        return f'<Adoption_Interview {self.id} {self.pet_2b_adopted} {self.pet_2b_adopted} {self.date} {self.time}>'
+        return f'<Adoption_Interview {self.id} {self.pet_2b_adopted.name} {self.potential_owner.first_name} {self.date} {self.time}>'
 
     def details(self):
         return {
@@ -273,7 +282,9 @@ class Adoption_Interview(db.Model):
             'date': self.date,
             'time': self.time,
             'pet':self.pet_id,
-            'owner': self.owner_id,
+            'pet name': self.pet_2b_adopted.name, 
+            'potential owner id': self.user_id,
+            'potential owner name': self.potential_owner.first_name+' '+self.potential_owner.last_name,
         }
 
     def insert(self):
