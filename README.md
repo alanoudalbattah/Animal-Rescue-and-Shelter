@@ -1,20 +1,14 @@
 # Animal Rescue and Shelter - Capstone Project
+This project is the Capstone project for the `Udacity Full-Stack Developer Nanodegree` Program.
 [Application Heroku Link](http)
 
 ## Content
-1. [Motivation](#Motivation)
-2. [Overview](#Overview)
-3. [Tech Stack](#Tech-Stack)
-4. [Project Structure](#Project-Structure)
-5. [Getting Started](#Getting-Started)
-6. [API Endpoints](#API-Endpoints)
+1. [Overview](#Overview)
+2. [Tech Stack](#Tech-Stack)
+3. [Project Structure](#Project-Structure)
+4. [Getting Started](#Getting-Started)
+5. [API Endpoints](#API-Endpoints)
 
-<a name="Motivation"></a>
-
-## Motivation
-This project is the Capstone project for my `Udacity Full-Stack Developer Nanodegree` Program.
-
-<a name="Overview"></a>
 
 ## Overview
 Animal Rescue and Shelter enables its users to look for the perfect friend (a cat or a dog to adopt) for the perfect home (users of the website). It eases the process of booking an interview with the shelter and searching for a pet to adopt. And its encorges its users to adopt rescued pets.
@@ -24,29 +18,17 @@ The shelter website is designed to cover one city and all process after the inte
 <a name="Tech-Stack"></a>
 
 ## Tech Stack (Dependencies)
-Python environments tool: [virtualenv](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/)
-ORM library: [SQLAlchemy](https://www.sqlalchemy.org/)
-Database: [PostgresSQL](https://www.postgresql.org/)
-Server language and server framework: [Python3](https://docs.python.org/3/using/unix.html#getting-and-installing-the-latest-version-of-python) and [Flask](https://flask.palletsprojects.com/en/2.0.x/)
-Creating and running schema migrations: [Flask-Migrate](https://flask-migrate.readthedocs.io/en/latest/) 
+- Python environments tool: [virtualenv](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/)
+- ORM library: [SQLAlchemy](https://www.sqlalchemy.org/)
+- Database: [PostgresSQL](https://www.postgresql.org/)
+- Server language and server framework: [Python3](https://docs.python.org/3/using/unix.html#getting-and-installing-the-latest-version-of-python) and [Flask](https://flask.palletsprojects.com/en/2.0.x/)
+- Creating and running schema migrations: [Flask-Migrate](https://flask-migrate.readthedocs.io/en/latest/) 
 
 
 <a name="Project-Structure"></a>
 
 ## Project Structure
 ```
-│   README.md
-├───backend
-│   │   app.py
-│   │   app.pyc
-│   │   LICENSE
-│   │   procfile
-│   │   README.md
-│   │   requirements.txt
-│   │   run.sh
-│   │   setup.sh
-│   │   unittest_app.py
-
 
 ```
 
