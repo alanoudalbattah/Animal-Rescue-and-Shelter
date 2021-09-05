@@ -1,21 +1,33 @@
-# Animal Rescue and Shelter
-``` This project is the Capstone project for my Udacity Full-Stack Developer Nanodegree Program. ```
+# Animal Rescue and Shelter - Capstone Project
+[Application Heroku Link](http)
 
+## Content
+1. [Motivation](#Motivation)
+2. [Overview](#Overview)
+3. [Tech Stack](#Tech-Stack)
+4. [Getting Started](#Getting-Started)
+5. [API Endpoints](#API-Endpoints)
+
+<a name="Motivation"></a>
+
+## Motivation
+This project is the Capstone project for my `Udacity Full-Stack Developer Nanodegree` Program.
+
+<a name="Overview"></a>
+
+## Overview
 Animal Rescue and Shelter enables its users to look for the perfect friend (a cat or a dog to adopt) for the perfect home (users of the website). It eases the process of booking an interview with the shelter and searching for a pet to adopt. And its encorges its users to adopt rescued pets.
 
 The shelter website is designed to cover one city and all process after the interview is not included in the scope of this project.
 
-[Application Heroku Link](http)
+<a name="Tech-Stack"></a>
 
-## Content
-1. [Application Stack](#Application-Stack)
-2. [Getting Started](#Getting-Started)
-3. [API Endpoints](#API-Endpoints)
-
-
-<a name="Application-Stack"></a>
-
-## Application Stack
+## Tech Stack (Dependencies)
+Python environments tool: [virtualenv](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/)
+ORM library: [SQLAlchemy](https://www.sqlalchemy.org/)
+Database: [PostgresSQL](https://www.postgresql.org/)
+Server language and server framework: [Python3](https://docs.python.org/3/using/unix.html#getting-and-installing-the-latest-version-of-python) and [Flask](https://flask.palletsprojects.com/en/2.0.x/)
+Creating and running schema migrations: [Flask-Migrate](https://flask-migrate.readthedocs.io/en/latest/) 
 
 <a name="Getting-Started"></a>
 
