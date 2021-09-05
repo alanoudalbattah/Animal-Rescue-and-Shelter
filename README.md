@@ -42,26 +42,12 @@ You can follow instructions specified in:
 <a name="API-Endpoints"></a>
 
 ## API Endpoints
-### Error Handlers for: `400` `401` `403` `404` `422` `500`
-All error handlers return a JSON object with the request status and error message i.e.:
-```JSON
-{
-   "success":false,
-   "error":400,
-   "message":"constraint violation, could not be deleted."
-}
-```
-
 ### Endpoints `/` `/about`
 #### Behaviour: 
 These endpoints don't perform any [CRUD](https://www.codecademy.com/articles/what-is-crud) operations on the database they just return a rendered file
+#### Response: Status Code - 200 (OK)
 
-#### Response: 
-Status Code - 200 (OK)
-
-See the endpoints frontend [here](./frontend/README.md)
-
-### Endpoints `POST '/interview'` `POST '/pet` `` `` `` `` `` ``
+### Endpoints [`/interview`](#post-interview) [`/pet`](#post-pet) `` `` `` `` `` ``
 
 These endpoints perform [CRUD](https://www.codecademy.com/articles/what-is-crud) operations on the [PostgresSQL](https://www.postgresql.org/about/) database:
 
@@ -91,11 +77,10 @@ DELETE Requests:
 
 <a name="post-interview"></a>
 
-### 1. POST /interview
+### 1. POST ```/interview```
 Creates a new interview.
 
-#### Request: ```POST '/interview'```
-#### Body -
+#### Request Body -
 ```JSON
 {
     "specie_id": 1,
@@ -109,7 +94,7 @@ Creates a new interview.
     "note": "Likes to play with lazerz :)"
 }
 ```
-### Response: Status Code - 201 (CREATED)
+#### Response: Status Code - 201 (CREATED)
 
 <a name="post-pet"></a>
 
@@ -123,4 +108,14 @@ Creates a new pet.
     
 }
 ```
-### Response: Status Code - 201 (CREATED)
+#### Response: Status Code - 201 (CREATED)
+
+### Error Handlers for: `400` `401` `403` `404` `422` `500`
+All error handlers return a JSON object with the request status and error message i.e.:
+```JSON
+{
+   "success":false,
+   "error":400,
+   "message":"constraint violation, could not be deleted."
+}
+```
