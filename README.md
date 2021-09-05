@@ -27,8 +27,7 @@ You can follow instructions specified in:
 <a name="API-Endpoints"></a>
 
 ## API Endpoints
-The API will return six (6) error types when a request fails: `400` `401` `403` `404` `422` `500`
-
+### Error Handlers for: `400` `401` `403` `404` `422` `500`
 All error handlers return a JSON object with the request status and error message i.e.:
 ```JSON
 {
@@ -38,17 +37,16 @@ All error handlers return a JSON object with the request status and error messag
 }
 ```
 
-Endpoints `/` `/about`
-
-### Behaviour: 
+### Endpoints `/` `/about`
+#### Behaviour: 
 These endpoints don't perform any [CRUD](https://www.codecademy.com/articles/what-is-crud) operations on the database they just return a rendered file
 
-### Response: 
+#### Response: 
 Status Code - 200 (OK)
 
 See the endpoints frontend [here](./frontend/README.md)
 
-Endpoints `POST '/interview'` `POST '/pet` `` `` `` `` `` ``
+### Endpoints `POST '/interview'` `POST '/pet` `` `` `` `` `` ``
 
 These endpoints perform [CRUD](https://www.codecademy.com/articles/what-is-crud) operations on the [PostgresSQL](https://www.postgresql.org/about/) database:
 

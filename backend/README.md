@@ -2,7 +2,6 @@
 ## Content
 1. [Getting Started](#Getting-Started)
 2. [Project Structure](#Project-Structure)
-3. 
 
 <a name="Getting-Started"></a>
 
