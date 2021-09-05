@@ -20,7 +20,7 @@ A total of 20 permissions are specified:
   - can `get:interview`
   - can `get:pet`
   - can `get:all-adopted-pets`
-  - can `get:all-Interviews`
+  - can `get:all-interviews`
   - can `get:all-breeds`
   - can `get:all-species`
 * Updating permissions
@@ -36,12 +36,12 @@ A total of 20 permissions are specified:
 ## RBAC permission claims
 ### User:
 
-  - can `post:interview`
+  - can `post:interview` <-- test
   - can `get:interviews`
-  - can `get:interview`✔️✔️<-- test
-  - can `get:pet`✔️✔️
-  - can `patch:interview`✔️✔️ <-- test
-  - can `delete:interview`✔️✔️ <-- test
+  - can `get:interview`
+  - can `get:pet`
+  - can `patch:interview` <-- test
+  - can `delete:interview`
 
 ### Manager:
 can do what the user can do, additionally:
@@ -51,7 +51,7 @@ can do what the user can do, additionally:
   - can `post:breed` 
   - can `get:pet`
   - can `get:all-adopted-pets`
-  - can `get:all-Interviews`
+  - can `get:all-interviews`
   - can `get:all-breeds`
   - can `get:all-species`
   - can `patch:pet`

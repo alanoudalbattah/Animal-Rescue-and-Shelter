@@ -1,7 +1,8 @@
-from flask import Flask, request, abort, jsonify, flash
+from datetime import date, time
+from flask import Flask, request, abort, jsonify
 from flask_cors import CORS
 from database.models import (
- setup_db, db_drop_and_create_all, db,
+ setup_db, db_drop_and_create_all,
  User, Adoption_Interview, 
  Specie, Breed, Pet,
 )
@@ -31,7 +32,7 @@ def create_app():
   ''' Role --> All can view '''
   @app.route('/all-pets', methods=['GET'])
   def view_all_pets():
-    return jsonify({'pets': [Pet.details(cat) for cat in Pet.query.all()]}), 200
+    return jsonify({'pets': [pet.details() for pet in Pet.query.all()]}), 200
   
   #! This route is not functional or implemented in the maintime
   #! left undeleted for future implementations. :)
@@ -60,23 +61,28 @@ def create_app():
   @TODO This Endpoint handles Viewing all interviews for a specific user 
        
   '''
-  #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  # @app.route('/interview/<int:_user_id>', methods=['GET'])
-  # def display_user_interviews(_user_id):
+  @app.route('/interviews/<int:_user_id>', methods=['GET'])
+  def display_user_interviews(_user_id):
 
-  #   user = User.query.get_or_404(_user_id)
+    # get the interviews id specific to a certain user form the user id 
+    interviews = [interview.id for interview in Adoption_Interview.query.filter(User.id == _user_id).all() ]
 
-  #   user.interviews
-
-  #   return jsonify({"interviews":[ for interview in ()]}), 200
+    return jsonify({"interviews":interviews}), 200
 
   '''
-  @TODO This Endpoint Creates a new interview 
+  @TODO This Endpoint Creates a new interview for the user 
+        #! on future implementation Manager can create an interview 
+
         - body
-        {
-            "pet_id": 0,
-            "user_id": 0,
-        }
+  {
+      "pet_id": 0,
+      "user_id": 0,
+      "year": 2021,
+      "month": 9,
+      "day": 3,
+      "hour": 11,
+      "minute": 30
+  }
   '''
   @app.route('/interview', methods=['POST'])
   def book_interview():
@@ -87,28 +93,58 @@ def create_app():
       abort(400, description="pet or user are missing")
 
     # from body take the id valued
-    pet_id = request.get('pet_id')
-    user_id = request.get('user_id')
+    pet_id = body.get('pet_id')
+    user_id = body.get('user_id')
 
     # fetch instance from db
     pet = Pet.query.get(pet_id)
     user = User.query.get(user_id)
 
     # check if both instance exists
-    if not (pet or user): abort(400, description="pet or user are missing")
+    if (pet==None or user==None): abort(400, description="pet or user are missing from the db")
 
-    # ! Fill here insted of date and time 
-    new_interview = Adoption_Interview("date","time")
-    new_interview.potential_owner = user
+    
+    # required interview informations
+    required_data = [
+      body.get('year'),
+      body.get('month'),
+      body.get('day'),
+      body.get('hour'),
+      body.get('minute'),
+      ]
+    
+    # checks if all required fields are present
+    for required in required_data: 
+      if (required == None): abort(400, description='required feild is missing') 
+    
+    # d = datetime.date(2019, 4, 13)
+    # output --> 2019-04-13
+    date_object = date(required_data[0], required_data[1], required_data[2])
+    ## time(hour, minute and second)
+    # c = time(hour = 11, minute = 34, second = 56)
+    # output --> c = 11:34:56
+    datetime_object = time(required_data[3], required_data[4], 0)
+    #src: https://www.programiz.com/python-programming/datetime
+
+
+    # create an interview obj
+    new_interview = Adoption_Interview(date_object,datetime_object)
     new_interview.pet_2b_adopted = pet
+    new_interview.potential_owner = user
 
     try:
       new_interview.insert()
-    except: abort(400, description="a constraint has been violated")
+    except: abort(400, description="interview already exists")
     
     return jsonify({"new_interview":new_interview.details()}), 201
   '''
   @TODO This Endpoint handles Viewing, updating, and deleting the interview 
+
+    #! on future implementation Manager can update pet or user 
+            - body - PATCH only
+        {
+            "year":2022
+        }
        
   '''
   @app.route('/interview/<int:_id>', methods=['GET', 'PATCH', 'DELETE'])
@@ -119,10 +155,16 @@ def create_app():
     if request.method == "PATCH": 
 
       body = request.get_json()
-      if ('date' in body): 
-        interview.date = body.get('date')
-      if ('date' in body): 
-        interview.time = body.get('time')
+      
+
+      # update interview date or time only for now
+      if 'year' or 'month' or 'day' in body:
+        interview.date = date(body.get('year'),body.get('month'),body.get('day'))
+    
+      if 'time' or 'hour' in body:
+        interview.time = date(body.get('hour'),body.get('minute'),0)
+
+    
 
       try:
           interview.update()
@@ -195,7 +237,7 @@ def create_app():
     
     # checks if all required fields are present
     for required in required_data: 
-      if (required == None): abort(400) 
+      if (required == None): abort(400, description='required feild is missing') 
 
     
     newPet = Pet(
@@ -272,8 +314,11 @@ def create_app():
     # for now trust the manager :) and insert ...
     newBreed = Breed(breedName, body.get('image_link'))
     newBreed.specie = specie
-    newBreed.insert()
-
+    
+    try:
+      newBreed.insert()
+    except:
+      abort(400, description='constraint violation could not be created') 
     return jsonify({'newBreed':newBreed.details()}), 201
 
 

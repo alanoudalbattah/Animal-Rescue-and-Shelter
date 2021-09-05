@@ -10,7 +10,7 @@ You can follow instructions specified in:
 2. [`./frontend/README.md`](./frontend/README.md)
 
 ## API Endpoints
-The following endpoints are implemented and they perform [CRUD](https://www.codecademy.com/articles/what-is-crud) operations on the [PostgresSQL](https://www.postgresql.org/about/) database:
+The following endpoints perform [CRUD](https://www.codecademy.com/articles/what-is-crud) operations on the [PostgresSQL](https://www.postgresql.org/about/) database:
 
 All CREATE Requests:
 * `POST '/interview'`

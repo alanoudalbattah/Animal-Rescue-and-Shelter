@@ -8,7 +8,6 @@ db = SQLAlchemy()
  # Two classes with primary keys at at least two attributes each ✔️
  # [Optional but encouraged] One-to-many or many-to-many relationships between classes ✔️
  # src: https://docs.sqlalchemy.org/en/14/orm/basic_relationships.html for relationships :)
-
 '''
 setup_db(app):
     binds a flask application and a SQLAlchemy service
@@ -45,26 +44,22 @@ class User(db.Model):
     
     first_name = db.Column(db.String, nullable=False, unique=True)
     last_name = db.Column(db.String, nullable=False, unique=True)
-    avatar = db.Column(db.String(500))
     email = db.Column(db.String(120))
     mobile = db.Column(db.String(120))
     age = db.Column(db.String(120), nullable=False)
 
     ''' relationship '''
-    # User:Pet One-To-Many (1:M) 
+    # Interview:User Many-To-One (M:1) interview --> parent, user --> child
+    #* no need to do anything here :)
 
-    #! not usefull in the meantime
+    # User:Pet One-To-Many (1:M)  user --> parent, pet --> child --> #! X
     # i will not make use of this attribute in the meantime due to limited time
     # however i will keep this line and relationship commented here for future uses :)
-    # adopted_pets = db.relationship("Pet", backref="user")
-        
-    # User:Interview One-To-Many (1:M) 
-    interviews = db.relationship("Adoption_Interview", backref="user", cascade='all, delete')
-
-    def __init__(self, first_name, last_name, avatar, email, mobile, age):
+    #adopted_pets = db.relationship("Pet", backref="user")
+    
+    def __init__(self, first_name, last_name, email, mobile, age):
         self.first_name = first_name
         self.last_name = last_name
-        self.avatar = avatar
         self.email = email
         self.mobile = mobile
         self.age = age
@@ -76,9 +71,7 @@ class User(db.Model):
     def details(self):
         return {
             'id': self.id,
-            'first_name': self.first_name,
-            'last_name': self.last_name,
-            'avatar': self.avatar,
+            'name': self.first_name +' '+ self.last_name,
             'email': self.email,
             'mobile': self.mobile,
             'age': self.age,
@@ -152,7 +145,7 @@ class Breed(db.Model):
     ''' relationships '''
     # Breed:Specie Many-To-One (M:1) 
     specie_id = db.Column(db.Integer, db.ForeignKey('specie.id'), nullable=False)
-    specie = db.relationship("Specie", backref="specie", cascade='all, delete')
+    specie = db.relationship("Specie", backref="breed_specie", cascade='all, delete')
     # Breed:Pet One-To-Many (1:M) 
 
     def __init__(self, name, image_link):
@@ -197,14 +190,16 @@ class Pet(db.Model):
     note = db.Column(db.String(400))
 
     ''' relationships '''
+    # Interview:Pet One-To-One (1:1) interview --> parent, pet --> child 
+    #* no need to implement anything here :)
+    
     # Pet:Breed Many-To-One (M:1) 
     breed_id = db.Column(db.Integer, db.ForeignKey('breed.id'), nullable=False)
-    breed = db.relationship("Breed", backref="pet")
-    # Pet:Interview One-To-One (1:1)
-    #* no need to implement anything here :)
-    # Pet:User Many-To-One (M:1)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    pet_owner = db.relationship("User", backref="user_pet")
+    breed = db.relationship("Breed", backref="breed_pet")
+    
+    # Pet:User Many-To-One (M:1) pet --> parent, user --> child #! X
+    # user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    # pet_owner = db.relationship("User", backref="user_pet")
 
 
     def __init__(self, name, image_link, age_in_months, gender, vaccinated, letter_box_trained, note):
@@ -232,9 +227,7 @@ class Pet(db.Model):
             'letter_box_trained': self.letter_box_trained,
             'note': self.note,
             'breed_id': self.breed_id,
-            'breed_name': self.breed.name,
-            'user_id': self.owner_id,
-            'owner_name': self.pet_owner.first_name+' '+self.pet_owner.last_name,
+            'breed_name': self.breed.name
         }
 
     def insert(self):
@@ -257,16 +250,20 @@ class Adoption_Interview(db.Model):
     __tablename__ = 'interview'
 
     id = db.Column(db.Integer, primary_key=True)
-    date = db.Column(db.Date)
-    time = db.Column(db.Time)
+    
+    date = db.Column(db.Date, nullable=False) # --> datetime.date() 
+    # src: https://docs.python.org/3/library/datetime.html
+    time = db.Column(db.DateTime, nullable=False) # --> datetime.datetime() 
+    # src: https://docs.python.org/3/library/datetime.html
 
     ''' relationships '''
-    # Pet:Interview One-To-One (1:1) Parent.child uselist src: https://docs.sqlalchemy.org/en/14/orm/relationship_api.html
-    pet_id = db.Column(db.Integer, db.ForeignKey('pet.id'))
-    pet_2b_adopted = db.relationship("Pet", backref=db.backref("interview", uselist=False, cascade='all, delete'))
-    # Interview:User Many-To-One (M:1) 
+    # Interview:Pet One-To-One (1:1) interview --> parent, pet --> child 
+    pet_id = db.Column(db.Integer, db.ForeignKey('pet.id'), nullable=False)
+    pet_2b_adopted = db.relationship("Pet", backref=db.backref("interview", uselist=False))
+    
+    # Interview:User Many-To-One (M:1) interview --> parent, user --> child
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    potential_owner = db.relationship("User", backref="interviews", cascade='all, delete')
+    potential_owner = db.relationship("User", backref="interviews")
     
 
     def __init__(self, date, time):
@@ -274,17 +271,13 @@ class Adoption_Interview(db.Model):
         self.time = time
 
     def __repr__(self):
-        return f'<Adoption_Interview {self.id} {self.pet_2b_adopted.name} {self.potential_owner.first_name} {self.date} {self.time}>'
+        return f'<Adoption_Interview {self.id} >' # {self.date} {self.time}
 
     def details(self):
         return {
             'id': self.id,
-            'date': self.date,
-            'time': self.time,
-            'pet':self.pet_id,
-            'pet name': self.pet_2b_adopted.name, 
-            'potential owner id': self.user_id,
-            'potential owner name': self.potential_owner.first_name+' '+self.potential_owner.last_name,
+            # 'date': self.date,
+            # 'time': self.time,
         }
 
     def insert(self):
