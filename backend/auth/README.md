@@ -1,14 +1,26 @@
-# Role-Based Access Control
+# Role-Based Access Control (RBAC)
 Authentication and Authorization is implemented using [Auth0](https://auth0.com/), All required configuration settings are included in the [`./auth.py`](./auth.py)
 ```
 AUTH0_DOMAIN = 'fsnd-class.us.auth0.com'
 ALGORITHMS = ['RS256']
 API_AUDIENCE = 'developer'
 ```
+
+## Content
+1. [Roles](#Roles)
+2. [Permissions](#Permissions)
+3. [Permission Claims](#Permission_claims)
+4. [Quality Assurance](#Quality-Assurance)
+
+<a name="Role"></a>
+
 ## Roles
 * User
 * Manager
-## Permission
+
+<a name="Permissions"></a>
+
+## Permissions
 A total of 20 permissions are specified:
 * Creation permissions
   - can `post:interview`
@@ -33,7 +45,10 @@ A total of 20 permissions are specified:
   - can `delete:pet`
   - can `delete:breed`
   - can `delete:specie`
-## RBAC permission claims
+
+<a name="Permission_claims"></a>
+
+## Permission Claims
 ### User:
   - can `post:interview`
   - can `get:interviews`
@@ -58,17 +73,9 @@ A total of 20 permissions are specified:
   - can `delete:breed`
   - can `delete:specie`
 
+<a name="Quality-Assurance"></a>
 
-### Quality Assurance
-Endpoints were tested with [Postman](https://getpostman.com).
-   - 2 users are registered one as a User and the other as a Manager.
-   
-   
-   
-   
-   
-   - Sign into each account and make note of the JWT.
-   - Import the postman collection `./ASR_RBAC.postman_collection.json`
-   - Right-clicking the collection folder for barista and manager, navigate to the authorization tab, and including the JWT in the token field (you should have noted these JWTs).
-   - Run the collection and correct any errors.
-   - Export the collection overwriting the one we've included so that we have your proper JWTs during review!
+## Quality Assurance
+A collection has been created for testing the endpoints with [Postman](https://getpostman.com).
+
+Import the file into Postman to run the tests. Adjust the values of the variables HOST and the Tokens where appropraite.

@@ -1,8 +1,9 @@
 from datetime import date, time
 from flask import Flask, request, abort, jsonify
 from flask_cors import CORS
-from database.models import (
- setup_db, db_drop_and_create_all,
+from flask_migrate import Migrate
+from db.models import (
+ setup_db, db_drop_and_create_all, db,
  User, Adoption_Interview, 
  Specie, Breed, Pet,
 )
@@ -12,6 +13,8 @@ def create_app():
   app = Flask(__name__)
   setup_db(app)
   CORS(app)
+  Migrate(app, db)
+
   
   """ uncomment at the first time running the app """
   #db_drop_and_create_all()
@@ -33,7 +36,7 @@ def create_app():
   @app.route('/all-pets', methods=['GET'])
   def view_all_pets():
     return jsonify({'pets': [pet.details() for pet in Pet.query.all()]}), 200
-  
+  ''' Role --> All can search '''
   #! This route is not functional or implemented in the maintime
   #! left undeleted for future implementations. :)
   @app.route('/search', methods=['POST'])
@@ -189,15 +192,24 @@ def create_app():
     
 
 
+
+
+
+
+
+
+
+
+
+
+
+
   ''' CAT CAT CAT CAT CAT CAT CAT CAT CAT CAT CAT CAT CAT CAT CAT CAT CAT CAT CAT CAT CAT CAT '''
   ''' Role --> only shelter employee (manager) '''
-  ''' 
-    @TODO This Endpoint Creates a new Cat 
-    Role: Manager
-    Permtions: C in CRUD
-  '''
 
-  
+  '''
+    interviews
+  '''
   '''
   @TODO This Endpoint view all previous and upcomming interviews
   '''
@@ -206,6 +218,18 @@ def create_app():
     return jsonify({'all interviews': [Adoption_Interview.details(interview) for interview in Adoption_Interview.query.all()]}), 200
 
 
+
+
+
+
+
+
+
+
+
+  '''
+    Pet
+  '''
 
   '''
   @TODO This Endpoint Creates a new pet post for adoption 
@@ -258,75 +282,21 @@ def create_app():
       )
 
     newPet.breed = breed
-    newPet.insert()
+
+    try: newPet.insert()
+    except: abort(400, description='constraint violation could not be created')
     
 
     return jsonify({"details":Pet.query.get(newPet.id).details()}), 201
-  
-  
+
+
+  ''' 
+    @TODO This Endpoint Views all adopted pets
+
   '''
-  @TODO This Endpoint Creates a new breed
-        - body
-        {
-          "specie":"Dog",
-        }
-  '''
-  @app.route('/specie', methods=['POST'])
-  def create_new_specie():
-    body = request.get_json()
-    
-    if not('specie' in body): abort(400, description='specie is not included in the body')
-    
-    specieName = body.get('specie')
-
-    #check if specie already exists in the database
-    simmilar = Specie.name.ilike(f'%{specieName}%')
-    specie = Specie.query.filter(simmilar).first()# search is case insensitive :)  
-    if (specie): abort(400, description='specie name already exists')
-
-    # verify specie name
-    possible_animals_verify = ["Cat","Dog","Genuine Pig"] #options possiple for now 
-    if possible_animals_verify.index(specieName) != -1:
-       newSpecie = Specie(specieName)
-       newSpecie.insert()
-    
-    else: abort(400, description='specie name is wrong')
-
-    return jsonify({'newSpecie':newSpecie.details()}), 201
-  '''
-  @TODO This Endpoint Creates a new breed
-        - body
-        {
-          "specie":"Dog",
-          "breed":"Hzzz"
-        }
-  '''
-  @app.route('/breed', methods=['POST'])
-  def create_new_breed():
-
-    body = request.get_json()
-    
-    if not('specie' in body): abort(400, description='specie is not included in the body')
-    specieName = body.get('specie')
-    simmilar = Specie.name.ilike(f'%{specieName}%')
-    specie = Specie.query.filter(simmilar).first()
-    if not('breed' in body): abort(400, description='breed is not included in the body')
-    
-    breedName = body.get('breed')
-
-    # check if breed already exists in the database
-    breed = Breed.query.filter(Breed.name.ilike(f'%{breedName}%')).first()# search is case insensitive :)  
-    if (breed): abort(400, description='breed name already exists')
-
-    # for now trust the manager :) and insert ...
-    newBreed = Breed(breedName, body.get('image_link'))
-    newBreed.specie = specie
-    
-    try:
-      newBreed.insert()
-    except:
-      abort(400, description='constraint violation could not be created') 
-    return jsonify({'newBreed':newBreed.details()}), 201
+  @app.route('/all-adopted-pets', methods=['GET'])
+  def view_all_adopted_pets():
+      return jsonify({'adopted pets': [Pet.details(pet) for pet in Pet.query.all() if pet.pet_owner != None]}), 200
 
 
   ''' 
@@ -382,11 +352,80 @@ def create_app():
       return jsonify({'pet':pet.details()}), 200
     
     elif request.method == "DELETE": 
-      pet.delete()
+      
+      try: pet.delete()
+      except: abort(400, description='constraint violation could not be deleted')
+      
       return jsonify({'pet_id':_id}), 200
     
     else: return jsonify({'pet':pet.details()}), 200
-  
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  '''
+    breed
+  '''
+
+
+  '''
+  @TODO This Endpoint Creates a new breed
+        - body
+        {
+          "specie":"Dog",
+          "breed":"Hzzz"
+        }
+  '''
+  @app.route('/breed', methods=['POST'])
+  def create_new_breed():
+
+    body = request.get_json()
+    
+    if not('specie' in body): abort(400, description='specie is not included in the body')
+    specieName = body.get('specie')
+    simmilar = Specie.name.ilike(f'%{specieName}%')
+    specie = Specie.query.filter(simmilar).first()
+    if not('breed' in body): abort(400, description='breed is not included in the body')
+    
+    breedName = body.get('breed')
+
+    # check if breed already exists in the database
+    breed = Breed.query.filter(Breed.name.ilike(f'%{breedName}%')).first()# search is case insensitive :)  
+    if (breed): abort(400, description='breed name already exists')
+
+    # for now trust the manager :) and insert ...
+    newBreed = Breed(breedName, body.get('image_link'))
+    newBreed.specie = specie
+    
+    try: newBreed.insert()
+    except: abort(400, description='constraint violation could not be created') 
+    
+    return jsonify({'newBreed':newBreed.details()}), 201
+
+
+  ''' 
+    @TODO This Endpoint Views all breeds
+
+  '''
+  @app.route('/all-breeds', methods=['GET'])
+  def view_all_breed():
+      return jsonify({'all breeds': [Breed.details(b) for b in Breed.query.all()]}), 200
+
+
   ''' 
     @TODO This Endpoint View, Update, or Delete a breed 
         - body - PATCH only
@@ -416,11 +455,88 @@ def create_app():
       return jsonify({'breed':breed.details()}), 200
     
     elif request.method == "DELETE": 
-      breed.delete()
+      try:
+        breed.delete()
+      except:
+        abort(400, description='constraint violation could not be deleted')
+      
       return jsonify({"breed_id":_id}), 200
 
     else: return jsonify({"breed details":breed.details()}), 200
   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  '''
+    Specie
+  '''
+
+  '''
+  @TODO This Endpoint Creates a new specie
+        - body
+        {
+          "specie":"Dog",
+        }
+  '''
+  @app.route('/specie', methods=['POST'])
+  def create_new_specie():
+    body = request.get_json()
+    
+    if not('specie' in body): abort(400, description='specie is not included in the body')
+    
+    specieName = body.get('specie')
+
+    #check if specie already exists in the database
+    # search is case insensitive :)  
+    specie = Specie.query.filter(Specie.name.ilike(f'%{specieName}%')).first()
+    if (specie): abort(400, description='specie name already exists')
+
+    # verify specie name
+    # options possiple for now are either Dog or a Cat
+    if ["Cat","Dog"].index(specieName) == -1: abort(400, description='specie name is not acceptable')
+    
+    newSpecie = Specie(specieName)
+    
+    try:  
+      newSpecie.insert()
+    except: 
+      abort(400, description='constraint violation could not be created') 
+    
+    return jsonify({'newSpecie':newSpecie.details()}), 201
+
+
+  ''' 
+    @TODO This Endpoint Views all speices
+
+  '''
+  @app.route('/all-species', methods=['GET'])
+  def view_all_specie():
+      return jsonify({'all species': [Specie.details(s) for s in Specie.query.all()]}), 200
+  
+
   ''' 
     @TODO This Endpoint View, Update, or Delete a specie 
         - body - PATCH only
@@ -449,36 +565,31 @@ def create_app():
           abort(400, description='constraint violation could not be updated')
       return jsonify({ 'specie':specie.details()}), 200
     elif request.method == "DELETE": 
-      specie.delete()
+      
+      try:
+        specie.delete()
+      except:
+        abort(400, description='constraint violation could not be deleted')
+
       return jsonify({"specie_id":_id}), 200
 
     else: return jsonify({"specie details":specie.details()}), 200
 
-    
 
-  ''' 
-    @TODO This Endpoint Views all adopted pets
 
-  '''
-  @app.route('/all-adopted-pets', methods=['GET'])
-  def view_all_adopted_pets():
-      return jsonify({'adopted pets': [Pet.details(pet) for pet in Pet.query.all() if pet.pet_owner != None]}), 200
 
-  ''' 
-    @TODO This Endpoint Views all breeds
 
-  '''
-  @app.route('/all-breeds', methods=['GET'])
-  def view_all_breed():
-      return jsonify({'all breeds': [Breed.details(b) for b in Breed.query.all()]}), 200
 
-  ''' 
-    @TODO This Endpoint Views all speices
 
-  '''
-  @app.route('/all-species', methods=['GET'])
-  def view_all_specie():
-      return jsonify({'all species': [Specie.details(s) for s in Specie.query.all()]}), 200
+
+
+
+
+
+
+
+
+
 
 
 
