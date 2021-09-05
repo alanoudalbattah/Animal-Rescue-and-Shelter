@@ -5,8 +5,9 @@
 1. [Motivation](#Motivation)
 2. [Overview](#Overview)
 3. [Tech Stack](#Tech-Stack)
-4. [Getting Started](#Getting-Started)
-5. [API Endpoints](#API-Endpoints)
+4. [Project Structure](#Project-Structure)
+5. [Getting Started](#Getting-Started)
+6. [API Endpoints](#API-Endpoints)
 
 <a name="Motivation"></a>
 
@@ -28,6 +29,26 @@ ORM library: [SQLAlchemy](https://www.sqlalchemy.org/)
 Database: [PostgresSQL](https://www.postgresql.org/)
 Server language and server framework: [Python3](https://docs.python.org/3/using/unix.html#getting-and-installing-the-latest-version-of-python) and [Flask](https://flask.palletsprojects.com/en/2.0.x/)
 Creating and running schema migrations: [Flask-Migrate](https://flask-migrate.readthedocs.io/en/latest/) 
+
+
+<a name="Project-Structure"></a>
+
+## Project Structure
+```
+│   README.md
+├───backend
+│   │   app.py
+│   │   app.pyc
+│   │   LICENSE
+│   │   procfile
+│   │   README.md
+│   │   requirements.txt
+│   │   run.sh
+│   │   setup.sh
+│   │   unittest_app.py
+
+
+```
 
 <a name="Getting-Started"></a>
 
@@ -94,19 +115,17 @@ Creates a new interview.
 #### Request: ```POST '/interview'```
 #### Body -
 ```JSON
-        {
-          "specie_id"=1, 
-          "breed_id"=1,
-
-          "name" = Hamoosh
-          "image_link" = image_link
-          "age_in_months" = 120
-          "gender" = Male
-          "vaccinated" = true
-          "letter_box_trained" = true
-          "note" = "Likes to play with lazerz :)"
-
-        }
+{
+    "specie_id": 1,
+    "breed_id": 1,
+    "name": "Hamoosh",
+    "image_link": "image_link",
+    "age_in_months": 120,
+    "gender": "Male",
+    "vaccinated": true,
+    "letter_box_trained": true,
+    "note": "Likes to play with lazerz :)"
+}
 ```
 ### Response: Status Code - 201 (CREATED)
 
