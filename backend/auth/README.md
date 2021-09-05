@@ -35,17 +35,14 @@ A total of 20 permissions are specified:
   - can `delete:specie`
 ## RBAC permission claims
 ### User:
-
-  - can `post:interview` <-- test
+  - can `post:interview`
   - can `get:interviews`
   - can `get:interview`
   - can `get:pet`
-  - can `patch:interview` <-- test
+  - can `patch:interview`
   - can `delete:interview`
 
 ### Manager:
-can do what the user can do, additionally:
-
   - can `post:pet` 
   - can `post:specie`
   - can `post:breed` 

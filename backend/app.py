@@ -71,7 +71,7 @@ def create_app():
 
   '''
   @TODO This Endpoint Creates a new interview for the user 
-        #! on future implementation Manager can create an interview 
+        #! on future implementation Manager can create an interview for now only the user
 
         - body
   {
@@ -142,9 +142,13 @@ def create_app():
 
     #! on future implementation Manager can update pet or user 
             - body - PATCH only
-        {
-            "year":2022
-        }
+  {
+      "year": 2021,
+      "month": 9,
+      "day": 3,
+      "hour": 11,
+      "minute": 30
+  }
        
   '''
   @app.route('/interview/<int:_id>', methods=['GET', 'PATCH', 'DELETE'])
@@ -156,15 +160,18 @@ def create_app():
 
       body = request.get_json()
       
-
       # update interview date or time only for now
-      if 'year' or 'month' or 'day' in body:
-        interview.date = date(body.get('year'),body.get('month'),body.get('day'))
-    
-      if 'time' or 'hour' in body:
-        interview.time = date(body.get('hour'),body.get('minute'),0)
-
-    
+      if ('year' in body):
+        interview.date = date(body.get('year'), interview.date.month, interview.date.day)
+      if ('month' in body):
+        interview.date = date(interview.date.year, body.get('month'), interview.date.day)
+      if ('day' in body):
+        interview.date = date(interview.date.year, interview.date.month, body.get('day'))
+      
+      if ('hour' in body):
+        interview.time = time(body.get('hour'), interview.time.minute, 0)
+      if ('minute' in body):
+        interview.time = time(interview.time.hour, body.get('minute'), 0)
 
       try:
           interview.update()

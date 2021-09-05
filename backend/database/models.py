@@ -34,7 +34,6 @@ def db_drop_and_create_all():
     db.drop_all()
     db.create_all()
 
-
 '''
     ...
 '''
@@ -271,14 +270,15 @@ class Adoption_Interview(db.Model):
         self.time = time
 
     def __repr__(self):
-        return f'<Adoption_Interview {self.id} >' # {self.date} {self.time}
+        return f'<Adoption_Interview {self.id} {self.date} {self.time}>' # 
 
     def details(self):
         return {
             'id': self.id,
-            # 'date': self.date,
-            # 'time': self.time,
+            'date': self.date.strftime("%m/%d/%Y"),
+            'time': self.time.strftime("%H:%M"),
         }
+    #src: https://www.codegrepper.com/code-examples/python/convert+datetime+object+into+string+sqlalchemy
 
     def insert(self):
         db.session.add(self)
