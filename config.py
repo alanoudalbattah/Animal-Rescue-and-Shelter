@@ -5,4 +5,3 @@ import os
 #src: https://stackoverflow.com/questions/66690321/flask-and-heroku-sqlalchemy-exc-nosuchmoduleerror-cant-load-plugin-sqlalchemy
 SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL').replace("://", "ql://", 1)
 SQLALCHEMY_TRACK_MODIFICATIONS = False
-EXPLAIN_TEMPLATE_LOADING = True
