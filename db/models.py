@@ -20,6 +20,7 @@ def setup_db(app, database_path=database_path):
     #? DATABASE_URL is the Heroku database URL, which will be generated with Heroku command and saved in setup.sh file
     #? With os.getenv(), if DATABASE_URL is empty, it will get default_data_path directly
     app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv('DATABASE_URL', database_path)
+    #app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv('DATABASE_URL').replace("://", "ql://", 1)
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     
     db.app = app
