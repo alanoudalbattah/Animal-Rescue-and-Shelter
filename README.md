@@ -1,5 +1,20 @@
 # Animal Rescue and Shelter - Capstone Project
 This project is the Capstone project for the `Udacity Full-Stack Developer Nanodegree` Program.
+
+Concepts and the skills summrized by udacity: 
+* Coding in Python 3
+* Relational Database Architecture
+* Modeling Data Objects with SQLAlchemy
+* Internet Protocols and Communication
+* Developing a Flask API
+* Authentication and Access
+* Authentication with Auth0
+* Authentication in Flask
+* Role-Based Access Control (RBAC)
+* Testing Flask Applications
+* Deploying Applications
+
+
 [Application Heroku Link](http)
 
 ## Content
@@ -43,13 +58,11 @@ You can follow instructions specified in:
 
 ## API Endpoints
 ### Endpoints `/` `/about`
-#### Behaviour: 
-These endpoints don't perform any [CRUD](https://www.codecademy.com/articles/what-is-crud) operations on the database they just return a rendered file
+#### Behaviour: These endpoints don't perform any [CRUD](https://www.codecademy.com/articles/what-is-crud) operations on the database they just return a rendered file.
 #### Response: Status Code - 200 (OK)
 
 ### Endpoints [`/interview`](#post-interview) [`/pet`](#post-pet) `` `` `` `` `` ``
-
-These endpoints perform [CRUD](https://www.codecademy.com/articles/what-is-crud) operations on the [PostgresSQL](https://www.postgresql.org/about/) database:
+#### Behaviour: These endpoints perform [CRUD](https://www.codecademy.com/articles/what-is-crud) operations on the [PostgresSQL](https://www.postgresql.org/about/) database.
 
 CREATE Requests:
 * [`POST '/interview'`](#post-interview)
