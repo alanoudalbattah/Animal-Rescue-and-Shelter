@@ -1,5 +1,7 @@
 from datetime import date, time
-from flask import Flask, request, abort, jsonify
+from flask import (Flask, 
+request, render_template,
+abort, jsonify)
 from flask_cors import CORS
 from flask_migrate import Migrate
 from db.models import (
@@ -10,7 +12,7 @@ from db.models import (
 
 def create_app():
   # create and configure the app
-  app = Flask(__name__)
+  app=Flask(__name__,template_folder='../template', static_folder='../static')
   setup_db(app)
   CORS(app)
   Migrate(app, db)
@@ -21,8 +23,8 @@ def create_app():
 
 
   @app.route('/', methods=['GET'])
-  def healthy(): 
-    return jsonify({"status":"Healthy"}),200
+  def index(): 
+    return render_template('index.html')
   
   #TODO: Endpoints will include at least
     # Two GET requests      ✔️

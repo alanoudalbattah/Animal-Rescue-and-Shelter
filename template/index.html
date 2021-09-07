@@ -15,7 +15,7 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
     <!-- my css -->
-    <link rel="stylesheet" href="./assets/css/styles.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 
 <header>
@@ -64,7 +64,7 @@
                         <a href="#"><button class="btn rounded-pill shadow">Join</button></a>
                     </ul>
                 </div>
-                <div class="col-sm"> <img class="catbg rounded " src=".\assets\img\index\cat_2.png " width="800 " height="477 "></div>
+                <div class="col-sm"> <img class="catbg rounded " src="{{url_for('static', filename='cat_2.png')}}" width="800 " height="477 "></div>
             </div>
 </a>
 
@@ -104,7 +104,7 @@
 
 <a name="search">
     <div id="Search" class="row justify-content-center align-items-center ">
-        <div class="col-md-4"> <img src="./assets/img/index/dog_1.png" width="400 " height="500 " alt=""></div>
+        <div class="col-md-4"> <img src="{{url_for('static', filename='dog_1.png')}}" width="400 " height="500 " alt=""></div>
         <div class="col-md-4">
             <h2 class="text-dark text-left text-muted">Search to Find your New <br> BEST FRIEND !</h2>
             <div class="row justify-content-center align-items-center">
