@@ -12,7 +12,7 @@ from db.models import (
 
 def create_app():
   # create and configure the app
-  app=Flask(__name__, template_folder='template', static_folder='static')
+  app=Flask(__name__)
   setup_db(app)
   CORS(app)
   Migrate(app, db)
