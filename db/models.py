@@ -6,6 +6,8 @@ from flask_sqlalchemy import SQLAlchemy
  # [Optional but encouraged] One-to-many or many-to-many relationships between classes ✔️
  # src: https://docs.sqlalchemy.org/en/14/orm/basic_relationships.html for relationships :)
 
+database_name ='animal_shelter'
+database_path= "postgresql://{}:{}@{}/{}".format('postgres', 'postgres', 'localhost:5432', database_name)
 
 db = SQLAlchemy()
 
@@ -13,11 +15,11 @@ db = SQLAlchemy()
 setup_db(app):
     binds a flask application and a SQLAlchemy service
 '''
-def setup_db(app):
+def setup_db(app, database_path=database_path):
 
     #? DATABASE_URL is the Heroku database URL, which will be generated with Heroku command and saved in setup.sh file
-    #? With os.getenv(), if DATABASE_URL is empty, it will get LOCAL_DATABASE_URL from the .env file 
-    app.config["DATABASE_URI"] = os.getenv('DATABASE_URL', 'LOCAL_DATABASE_URL')
+    #? With os.getenv(), if DATABASE_URL is empty, it will get default_data_path directly
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv('DATABASE_URL', database_path)
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     
     db.app = app
