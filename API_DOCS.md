@@ -133,7 +133,7 @@ Creates a new Pet post.
 }
 ```
 
-<a name="post-pet"></a>
+<a name="post-user"></a>
 
 ## 3. `POST` ```/user```
 Creates a new user.
