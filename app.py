@@ -64,61 +64,6 @@ def create_app():
     # One DELETE request    ✔️
   
 
-
-
-  # oauth = OAuth(app)
-
-  # auth0 = oauth.register(
-  #     'auth0',
-  #     client_id='ceQ2QXcul85lqvr59eZvaaL0nDLE5V4J',
-  #     client_secret='YOUR_CLIENT_SECRET',
-  #     api_base_url='https://fsnd-class.us.auth0.com',
-  #     access_token_url='https://fsnd-class.us.auth0.com/oauth/token',
-  #     authorize_url='https://fsnd-class.us.auth0.com/authorize',
-  #     client_kwargs={
-  #         'scope': 'openid profile email',
-  #     },
-  # )
-  # # Auth routes
-  # # /server.py
-
-  # # Here we're using the /callback route.
-  # @app.route('/callback')
-  # def callback_handling():
-  #     # Handles response from token endpoint
-  #     auth0.authorize_access_token()
-  #     resp = auth0.get('userinfo')
-  #     userinfo = resp.json()
-
-  #     # Store the user information in flask session.
-  #     session['jwt_payload'] = userinfo
-  #     session['profile'] = {
-  #         'user_id': userinfo['sub'],
-  #         'name': userinfo['name'],
-  #         'picture': userinfo['picture']
-  #     }
-  #     return redirect('/dashboard')
-
-
-
-  # # /server.py
-
-  # @app.route('/login')
-  # def login():
-  #     return auth0.authorize_redirect(redirect_uri='/all-pets')
-
-
-
-
-  # @app.route('/logout')
-  # def logout():
-  #     # Clear session stored data
-  #     session.clear()
-  #     # Redirect user to logout endpoint
-  #     params = {'returnTo': url_for('home', _external=True), 'client_id': 'ceQ2QXcul85lqvr59eZvaaL0nDLE5V4J'}
-  #     return redirect(auth0.api_base_url + '/v2/logout?' + urlencode(params))
-
-
   '''
   @TODO This Endpoint Creates a new user 
         #! Auth0 ?
@@ -159,17 +104,6 @@ def create_app():
     except: abort(400, description='constraint violation could not be created')
     
     return jsonify({"details":User.query.get(newUser.id).details()}), 201
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -349,18 +283,7 @@ def create_app():
 
 
 
-
-
-
-
-
-
-
-
-
-
-  ''' CAT CAT CAT CAT CAT CAT CAT CAT CAT CAT CAT CAT CAT CAT CAT CAT CAT CAT CAT CAT CAT CAT '''
-  ''' Role --> only shelter employee (manager) '''
+  ''' #TODO Role --> only shelter employee (manager) '''
 
   '''
     interviews
@@ -369,18 +292,9 @@ def create_app():
   @TODO This Endpoint view all previous and upcomming interviews
   '''
   @app.route('/all-interviews', methods=['GET'])
-  #@requires_auth('get:all-interviews')
-  def view_all_interviews():#payload
+  @requires_auth('get:all-Interviews')
+  def view_all_interviews(payload):
     return jsonify({'all interviews': [Adoption_Interview.details(interview) for interview in Adoption_Interview.query.all()]}), 200
-
-
-
-
-
-
-
-
-
 
 
   '''
@@ -402,7 +316,8 @@ def create_app():
         }
   '''
   @app.route('/pet', methods=['POST'])
-  def create_cat_information():
+  @requires_auth('post:pet')
+  def create_cat_information(payload):
 
     body = request.get_json()
 
@@ -451,7 +366,8 @@ def create_app():
 
   '''
   @app.route('/all-adopted-pets', methods=['GET'])
-  def view_all_adopted_pets():
+  @requires_auth('get:all-adopted-pets')
+  def view_all_adopted_pets(payload):
       return jsonify({'adopted pets': [Pet.details(pet) for pet in Pet.query.all() if pet.pet_owner != None]}), 200
 
 
@@ -465,7 +381,8 @@ def create_app():
 
   '''
   @app.route('/pet/<int:_id>', methods=['GET', 'PATCH', 'DELETE'])
-  def pet_cat(_id):
+  @requires_auth('post:pet') # other permmisions dose the same maybe i should delete them? 'patch:pet', 'delete:pet'
+  def pet_cat(payload, _id):
     
     pet = Pet.query.get_or_404(_id)
     
@@ -510,27 +427,12 @@ def create_app():
     elif request.method == "DELETE": 
       
       try: pet.delete()
-      except: abort(400, description='constraint violation could not be deleted')
+      except: abort(400, description='constraint violation could not be deleted, maybe there is an interview linked :)')
       
       return jsonify({'pet_id':_id}), 200
     
     else: return jsonify({'pet':pet.details()}), 200
  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
   '''
@@ -547,7 +449,8 @@ def create_app():
         }
   '''
   @app.route('/breed', methods=['POST'])
-  def create_new_breed():
+  @requires_auth('post:breed')
+  def create_new_breed(payload):
 
     body = request.get_json()
     
@@ -578,7 +481,8 @@ def create_app():
 
   '''
   @app.route('/all-breeds', methods=['GET'])
-  def view_all_breed():
+  @requires_auth('get:all-breeds')
+  def view_all_breed(payload):
 
       #* Implement pagniation
       page = request.args.get('page', 1, type=int)
@@ -603,7 +507,8 @@ def create_app():
 
   '''
   @app.route('/breed/<int:_id>', methods=['GET', 'PATCH', 'DELETE'])
-  def breed(_id):
+  @requires_auth('patch:breed')
+  def breed(payload, _id):
 
     breed = Breed.query.get_or_404(_id)
     body = request.get_json()
@@ -626,37 +531,12 @@ def create_app():
       try:
         breed.delete()
       except:
-        abort(400, description='constraint violation could not be deleted')
+        abort(400, description='constraint violation could not be deleted, maybe there is a pet linked')
       
       return jsonify({"breed_id":_id}), 200
 
     else: return jsonify({"breed details":breed.details()}), 200
   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   '''
     Specie
@@ -670,7 +550,8 @@ def create_app():
         }
   '''
   @app.route('/specie', methods=['POST'])
-  def create_new_specie():
+  @requires_auth('post:specie')
+  def create_new_specie(payload):
     body = request.get_json()
     
     if not('specie' in body): abort(400, description='specie is not included in the body')
@@ -703,7 +584,8 @@ def create_app():
 
   '''
   @app.route('/all-species', methods=['GET'])
-  def view_all_specie():
+  @requires_auth('get:all-species')
+  def view_all_specie(payload):
       return jsonify({'all species': [Specie.details(s) for s in Specie.query.all()]}), 200
   
 
@@ -716,7 +598,8 @@ def create_app():
 
   '''
   @app.route('/specie/<int:_id>', methods=['GET', 'PATCH', 'DELETE'])
-  def specie(_id):
+  @requires_auth('delete:specie')
+  def specie(payload, _id):
 
     specie = Specie.query.get_or_404(_id)
     body = request.get_json()
@@ -750,24 +633,6 @@ def create_app():
       return jsonify({"specie_id":_id}), 200
 
     else: return jsonify({"specie details":specie.details()}), 200
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
   ''' Error Handling '''

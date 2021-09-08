@@ -22,7 +22,9 @@ Concepts and the skills summrized by udacity:
 1. [Tech Stack](#Tech-Stack)
 1. [Getting Started](#Getting-Started)
 1. [API Documentation](#API-Docs)
-1. [Project Structure](#Project-Structure)
+1. [Authentication](#Authentication)
+1. [Heroku Deployment](#Deployment)
+1. [Frontend](#frontend)
 
 <a name="Overview"></a>
 
@@ -34,6 +36,7 @@ The shelter website is designed to cover one city and all process after the inte
 <a name="Tech-Stack"></a>
 
 ## Tech Stack (Dependencies)
+----
 - Python environments tool: [virtualenv](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/)
 - ORM library: [SQLAlchemy](https://www.sqlalchemy.org/)
 - Database: [PostgresSQL](https://www.postgresql.org/)
@@ -46,6 +49,7 @@ The shelter website is designed to cover one city and all process after the inte
 <a name="Getting-Started"></a>
 
 ## Getting Started
+----
 To work with the application locally first make sure you have [python](https://www.python.org/downloads/) installed.
 
 Then:
@@ -78,11 +82,24 @@ python unittest_app.py
 <a name="API-Docs"></a>
 
 ## API Documentation
+----
 You can view the documentation at [API Documentation](./API_DOCS.md)
 
-<a name="Project-Structure"></a>
+<a name="Authentication"></a>
 
-## Project Structure
-```
+## Authentication
+----
+Protected API Endpoints are decorated with Auth0 permissions. to use the project locally, you need to config Auth0 accordingly. read[Authentication with Auth0](./auth/README.md) for more details.
 
-```
+<a name="Deployment"></a>
+
+## Heroku Deployment
+----
+This project is deployed to Heroku at the following link: https://animal-rescue-and-shelter.herokuapp.com/
+
+<a name="Frontend"></a>
+
+## Frontend
+----
+For now only the home page has been devoloped.
+

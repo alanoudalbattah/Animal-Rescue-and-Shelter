@@ -9,8 +9,6 @@ from urllib.request import urlopen
 # Permissions specified for all endpoints
 
 
-#* https://fsnd-class.us.auth0.com/authorize?audience=developer&response_type=token&client_id={{YOUR_CLIENT_ID}}&redirect_uri={{YOUR_CALLBACK_URI}}
-
 AUTH0_DOMAIN =  os.getenv('AUTH0_DOMAIN')
 ALGORITHMS = os.getenv('ALGORITHMS')
 API_AUDIENCE = os.getenv('API_AUDIENCE')
