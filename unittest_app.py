@@ -38,12 +38,13 @@ class AnimalShelter(unittest.TestCase):
     def create_temp_specie(self):
         return self.client().post('/specie', data=json.dumps({'specie':'Cat'}), headers={'Content-Type': 'application/json'})
     
-    def create_temp_breed(self):
+    def create_temp_breed(self, name=names.gen()):
+        self.create_temp_specie()
         return self.client().post('/breed', data=json.dumps(
                   
         {
             'specie': 'Cat',
-            'breed': names.gen()
+            'breed': name
         }
         
         ), headers={'Content-Type': 'application/json'})
@@ -57,7 +58,7 @@ class AnimalShelter(unittest.TestCase):
         POST routes unittest
     ''' 
     '''
-        1- (specie) test creation of species can be ['Cat', 'Dog'] ✅
+        1- (specie) test creation of species can be ['Cat', 'Dog']
     ''' 
     #* test successful operation for creating a specie using POST /specie
     def test_200_create_specie(self):
@@ -97,22 +98,33 @@ class AnimalShelter(unittest.TestCase):
         # test status code and message
         self.assertEqual(res.status_code, 400)
         self.assertEqual(data['message'], 'specie name is not acceptable')
-    
-    # '''
-    #     2-
-    # ''' 
-    # #* test successful operation for creating a breed using POST /breed
-    # def test_200_create_breed(self):
-    #     all_interviews_before = len(Adoption_Interview.query.all())
+    '''
+        1- (breed) test creation of breed
+    ''' 
+    #* test successful operation for creating a breed using POST /specie
+    def test_200_create_breed(self):
+
+        self.reset_database()
+
+        res = self.create_temp_breed()
+
+        data = json.loads(res.data)
         
-    #     user = User()
-    #     pet = Pet()
-    #     interview_2b_created = Adoption_Interview("","","","")
+        # test status code and message
+        self.assertEqual(res.status_code, 201)
+    
+    #! test unsuccessful operation for creating a specie using POST /specie
+    def test_400_create_breed(self):
 
-    # #! test unsuccessful operation for creating a breed using POST /breed
-    # def test_400_create_breed(self):
-    #     all_interviews_before = len(Adoption_Interview.query.all())
+        breed_name_taken = (Breed.query.first()).name
 
+        res = self.create_temp_breed(breed_name_taken)
+
+        data = json.loads(res.data)
+        
+        # test status code and message
+        self.assertEqual(res.status_code, 400)
+    
     # '''
     #     3-
     # ''' 
@@ -156,16 +168,49 @@ class AnimalShelter(unittest.TestCase):
     def test_200_view_all_species(self):
 
         res = self.client().get('/all-species')
+        
         data = json.loads(res.data)
+
+        # test if the pagination is correct and if it dose not exceed 10 
+        self.assertTrue(len(data['all species']) <= 10)
         
         # test status code and responce
         self.assertEqual(res.status_code, 200)
         self.assertTrue(len(data['all species']) != -1)
 
-    #! test unsuccessful operation for viewing all species using GET /all-species
-    def test_403_view_all_species(self):
-        pass
-        #XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX# ! test unauthorized access later 
+    #! test unsuccessful operation for viewing out of pagination boundary all-species using GET /all-species
+    def test_404_view_all_species(self):
+        
+        res = self.client().get('/all-species?page=50')
+        data = json.loads(res.data)
+
+        # test status code and message
+        self.assertEqual(res.status_code, 404)
+
+    '''
+        2- (breed) test view all-breeds
+    ''' 
+    #* test successful operation for viewing all breeds using GET /all-breeds
+    def test_200_view_all_breeds(self):
+
+        res = self.client().get('/all-breeds')
+        data = json.loads(res.data)
+
+        # test if the pagination is correct and if it dose not exceed 10 
+        self.assertTrue(len(data['all breeds']) <= 10)
+        
+        # test status code and responce
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(len(data['all breeds']) != -1)
+
+    #! test unsuccessful operation for viewing all breeds using GET /all-breeds
+    def test_404_view_all_breeds(self):
+        
+        res = self.client().get('/all-breeds?page=50')
+        data = json.loads(res.data)
+
+        # test status code and message
+        self.assertEqual(res.status_code, 404)
     
     '''
         1- (specie) test view specie by id
@@ -186,6 +231,29 @@ class AnimalShelter(unittest.TestCase):
     def test_404_view_specie_byID(self):
 
         res = self.client().get('/specie/8')
+
+        # test status code
+        self.assertEqual(res.status_code, 404)
+
+    '''
+        1- (breed) test view specie by id
+    ''' 
+    #* test successful operation for viewing specie by id using GET /breed/<int:_id>
+    def test_200_view_breed_byID(self):
+        
+        self.create_temp_breed()
+        
+        avalible_breed = (Breed.query.first())
+
+        res = self.client().get('/breed/'+str(avalible_breed.id))
+        
+        # test status code
+        self.assertEqual(res.status_code, 200)
+
+    #! test unsuccessful operation for viewing breed by id out of boundary using GET /breed/<int:_id>
+    def test_404_view_breed_byID(self):
+
+        res = self.client().get('/breed/8')
 
         # test status code
         self.assertEqual(res.status_code, 404)
