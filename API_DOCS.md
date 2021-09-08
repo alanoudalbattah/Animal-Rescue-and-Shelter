@@ -207,7 +207,22 @@ Views a specific breed by id received from the params.
 
 Updates a specific specie by id received from the params.
 
+#### Request Body -
+```JSON
+{
+    "name":"Dog"
+}
+```
 #### Response: Status Code - 200 (OK)
+```JSON
+{
+{
+    "specie": {
+        "id": 1,
+        "name": "Dog"
+    }
+}
+```
 
 
 <a name="pat-breed-byid"></a>
@@ -216,7 +231,23 @@ Updates a specific specie by id received from the params.
 
 Updates a specific breed by id received from the params.
 
+#### Request Body -
+```JSON
+{
+    "specie_id":"2"
+}
+```
 #### Response: Status Code - 200 (OK)
+```JSON
+{
+    "breed": {
+        "id": 1,
+        "image": "https://some_image_link.com/", 
+        "name": "Rag Doll", 
+        "specie_id": 2
+    }
+}
+```
 
 
 <a name="del-specie-byid"></a>
