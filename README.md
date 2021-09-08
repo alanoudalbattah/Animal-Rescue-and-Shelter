@@ -19,11 +19,12 @@ Concepts and the skills summrized by udacity:
 
 ## Content
 1. [Overview](#Overview)
-2. [Tech Stack](#Tech-Stack)
-3. [Project Structure](#Project-Structure)
-4. [Getting Started](#Getting-Started)
-5. [API Endpoints](#API-Endpoints)
+1. [Tech Stack](#Tech-Stack)
+1. [Getting Started](#Getting-Started)
+1. [API Documentation](#API-Docs)
+1. [Project Structure](#Project-Structure)
 
+<a name="Overview"></a>
 
 ## Overview
 Animal Rescue and Shelter enables its users to look for the perfect friend (a cat or a dog to adopt) for the perfect home (users of the website). It eases the process of booking an interview with the shelter and searching for a pet to adopt. And its encorges its users to adopt rescued pets.
@@ -40,12 +41,7 @@ The shelter website is designed to cover one city and all process after the inte
 - Creating and running schema migrations: [Flask-Migrate](https://flask-migrate.readthedocs.io/en/latest/) 
 
 
-<a name="Project-Structure"></a>
 
-## Project Structure
-```
-
-```
 
 <a name="Getting-Started"></a>
 
@@ -79,81 +75,14 @@ python unittest_app.py
 ```
 
 
-<a name="API-Endpoints"></a>
+<a name="API-Docs"></a>
 
-## API Endpoints
-### Endpoints `/` `/about`
-#### Behaviour: These endpoints don't perform any [CRUD](https://www.codecademy.com/articles/what-is-crud) operations on the database they just return a rendered file.
-#### Response: Status Code - 200 (OK)
+## API Documentation
+You can view the documentation at [API Documentation](./API_DOCS.md)
 
-### Endpoints [`/interview`](#post-interview) [`/pet`](#post-pet) `` `` `` `` `` ``
-#### Behaviour: These endpoints perform [CRUD](https://www.codecademy.com/articles/what-is-crud) operations on the [PostgresSQL](https://www.postgresql.org/about/) database.
+<a name="Project-Structure"></a>
 
-CREATE Requests:
-* [`POST '/interview'`](#post-interview)
-* [`POST '/pet'`](#post-pet)
-
-READ Requests:
-* [`GET '/all-pets'`](#)
-* [`GET '/interviews'`](#)
-* [`GET '/pets-detail'`](#)
-* [`GET '/all-adopted-pets'`](#)
-* [`GET '/all-Interviews'`](#)
-
-UPDATE Requests:
-* [`PATCH '/'`](#)
-* [`PATCH '/'`](#)
-* [`PATCH '/'`](#)
-* [`PATCH '/'`](#)
-
-DELETE Requests:
-* [`DELETE '/'`](#)
-* [`DELETE '/'`](#)
-* [`DELETE '/'`](#)
-* [`DELETE '/'`](#)
-
-
-<a name="post-interview"></a>
-
-### 1. POST ```/interview```
-Creates a new interview.
-
-#### Request Body -
-```JSON
-{
-    "specie_id": 1,
-    "breed_id": 1,
-    "name": "Hamoosh",
-    "image_link": "image_link",
-    "age_in_months": 120,
-    "gender": "Male",
-    "vaccinated": true,
-    "letter_box_trained": true,
-    "note": "Likes to play with lazerz :)"
-}
+## Project Structure
 ```
-#### Response: Status Code - 201 (CREATED)
 
-<a name="post-pet"></a>
-
-### 2. POST /pet
-Creates a new pet.
-
-#### Request: ```POST '/pet'```
-#### Body -
-```JSON
-{
-    
-}
-```
-#### Response: Status Code - 201 (CREATED)
-
-### Error Handlers for: `400` `401` `403` `404` `422` `500`
-All error handlers return a JSON object with the request status and error message i.e.:
-```JSON
-{
-   "success":false,
-   "error":400,
-   "message":"constraint violation, could not be deleted."
-}
 ```
