@@ -141,28 +141,29 @@ def create_app():
 
     # Letter Box Trained Constrant
 
-    return jsonify({}), 200
+    pass
 
+  ''' Role --> All manager can assign '''
+  #! This route is not functional or implemented in the maintime
+  #! left undeleted for future implementations. :)
+  @app.route('/assign', methods=['POST'])
+  def assign_owner_to_pet():
+    pass
 
-  ''' OWNER OWNER OWNER OWNER OWNER OWNER OWNER OWNER OWNER OWNER OWNER OWNER OWNER OWNER OWNER '''
   ''' Role --> only registered users can view '''
-  
-  
+    
   '''
   @TODO This Endpoint handles Viewing all interviews for a specific user 
        
   '''
   @app.route('/interviews/<int:_user_id>', methods=['GET'])
-  def display_user_interviews(_user_id):
-
-    # get the interviews id specific to a certain user form the user id 
-    interviews = [interview.id for interview in Adoption_Interview.query.filter(User.id == _user_id).all() ]
-
-    return jsonify({"interviews":interviews}), 200
+  @requires_auth('get:interviews')
+  def display_user_interviews(payload, _user_id):
+    return jsonify({"interviews":[interview.id for interview in Adoption_Interview.query.filter(User.id == _user_id).all() ]}), 200
 
   '''
   @TODO This Endpoint Creates a new interview for the user 
-        #! on future implementation Manager can create an interview for now only the user
+        #! on future implementation Manager can create an interview for now only the user can do that
 
         - body
   {
@@ -176,7 +177,8 @@ def create_app():
   }
   '''
   @app.route('/interview', methods=['POST'])
-  def book_interview():
+  @requires_auth('post:interview')
+  def book_interview(payload):
     body = request.get_json()
     
     # check if required fields are present
@@ -229,6 +231,8 @@ def create_app():
        abort(400, description="interview already exists")
     
     return jsonify({"new_interview":new_interview.details()}), 201
+
+
   '''
   @TODO This Endpoint handles Viewing, updating, and deleting the interview 
 
@@ -244,7 +248,8 @@ def create_app():
        
   '''
   @app.route('/interview/<int:_id>', methods=['GET', 'PATCH', 'DELETE'])
-  def view_upcoming_interviews(_id):
+  @requires_auth('delete:interview')
+  def view_upcoming_interviews(payload, _id):
     
     interview = Adoption_Interview.query.get_or_404(_id)
 
