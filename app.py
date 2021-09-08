@@ -660,8 +660,14 @@ def create_app():
       
       if not ('name' in body): abort(400, description='specie is not included in the body')
       
-      specie.name = body.get('name')
-       
+      specieName = body.get('name')
+      # verify specie name
+      # options possiple for now are either Dog or a Cat
+      acceptable_names_for_specie = ["Cat","Dog"]
+      if not (specieName in acceptable_names_for_specie): 
+        abort(400, description='specie name is not acceptable')
+      
+      specie.name = specieName
 
       try:
           specie.update()

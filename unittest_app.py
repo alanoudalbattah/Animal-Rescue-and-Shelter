@@ -17,23 +17,26 @@ class AnimalShelter(unittest.TestCase):
         
         self.database_name = "animal_shelter_test"
         self.database_path = "postgresql://postgres:postgres@{}/{}".format('localhost:5432', self.database_name)
-
-        setup_db(self.app, self.database_path)
-        db_drop_and_create_all()
-
+        
         # binds the app to the current context
         with self.app.app_context():
-            self.db = SQLAlchemy()
-            self.db.init_app(self.app)
-            # create all tables
-            self.db.drop_all()
-            self.db.create_all()
-        # src: Udacity's Travia Api Project
-    
+            setup_db(self.app, self.database_path)
+        
+        
     def tearDown(self):
         pass
-         
     
+    '''
+
+        helper methods
+
+    '''
+    def reset_database(self):
+        db_drop_and_create_all() 
+
+    def create_temp_specie(self):
+        self.client().post('/specie', data=json.dumps({'specie':'Cat'}), headers={'Content-Type': 'application/json'})
+
 
     """
     TODO 
@@ -43,10 +46,12 @@ class AnimalShelter(unittest.TestCase):
         POST routes unittest
     ''' 
     '''
-        1- test creation of species can be ['Cat', 'Dog'] ✅
+        1- (specie) test creation of species can be ['Cat', 'Dog'] ✅
     ''' 
     #* test successful operation for creating a specie using POST /specie
     def test_200_create_specie(self):
+
+        self.reset_database()
 
         all_species_before = len(Specie.query.all())
 
@@ -64,22 +69,22 @@ class AnimalShelter(unittest.TestCase):
         self.assertEqual(data['newSpecie'], {'id': 1, 'name': 'Dog'})
     
     #! test unsuccessful operation for creating a specie using POST /specie
-    # def test_400_create_specie(self):
+    def test_400_create_specie(self):
 
-    #     all_species_before = len(Specie.query.all())
+        all_species_before = len(Specie.query.all())
 
-    #     res = self.client().post('/specie', data=json.dumps({'specie':'Fish'}), headers={'Content-Type': 'application/json'})
-    #     data = json.loads(res.data)
+        res = self.client().post('/specie', data=json.dumps({'specie':'Fish'}), headers={'Content-Type': 'application/json'})
+        data = json.loads(res.data)
 
 
-    #     all_species_after = len(Specie.query.all())
+        all_species_after = len(Specie.query.all())
 
-    #     # check if an inance is not added on species table
-    #     self.assertTrue(all_species_after - all_species_before == 0)
+        # check if an inance is not added on species table
+        self.assertTrue(all_species_after - all_species_before == 0)
         
-    #     # test status code and message
-    #     self.assertEqual(res.status_code, 400)
-    #     # self.assertEqual(data['message'], 'specie name is not acceptable')
+        # test status code and message
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(data['message'], 'specie name is not acceptable')
     
     # '''
     #     2-
@@ -133,8 +138,47 @@ class AnimalShelter(unittest.TestCase):
         GET routes unittest
     '''      
     '''
-        1-
+        1- (specie) test view all-species 
     ''' 
+    #* test successful operation for viewing all species using GET /all-species
+    def test_200_view_all_species(self):
+
+        res = self.client().get('/all-species')
+        data = json.loads(res.data)
+        
+        # test status code and responce
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(len(data['all species']) != -1)
+
+    #! test unsuccessful operation for viewing all species using GET /all-species
+    def test_403_view_all_species(self):
+        pass
+        #XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX# ! test unauthorized access later 
+    
+    '''
+        1- (specie) test view specie by id
+    ''' 
+    #* test successful operation for viewing specie by id using GET /specie/<int:_id>
+    def test_200_view_specie_byID(self):
+        
+        self.create_temp_specie()
+        
+        avalible_id = (Specie.query.first()).id 
+
+        res = self.client().get('/specie/'+str(avalible_id))
+        
+        # test status code
+        self.assertEqual(res.status_code, 200)
+
+    #! test unsuccessful operation for viewing specie by id out of boundary using GET /specie/<int:_id>
+    def test_404_view_specie_byID(self):
+
+        res = self.client().get('/specie/8')
+
+        # test status code
+        self.assertEqual(res.status_code, 404)
+              
+
     #* test successful operation for viewing all pets using GET /all-pets
     # def test_200_view_pets(self):
     #     res = self.client().get('/all-pets')
@@ -153,12 +197,62 @@ class AnimalShelter(unittest.TestCase):
     '''
         PATCH routes unittest
     '''  
+    '''
+        1- (specie) test update specie by id
+    ''' 
+    #* test successful operation for updating specie by id using PATCH /specie/<int:_id>
+    def test_200_update_specie_byID(self):
+        
+        self.create_temp_specie()
+
+        avalible_specie = Specie.query.one_or_none()
+
+        res = self.client().patch('/specie/'+str(avalible_specie.id), data=json.dumps({'name':'Dog'}), headers={'Content-Type': 'application/json'})
+        data = json.loads(res.data)
+        
+        # test status code
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['specie'],  {'id': avalible_specie.id, 'name':'Dog'} )
+
+    #! test unsuccessful operation for updating specie by id name not acceptable using  PATCH /specie/<int:_id>
+    def test_400_update_specie_byID(self):
+        
+        avalible_id = (Specie.query.first()).id 
+
+        res = self.client().patch('/specie/'+str(avalible_id), data=json.dumps({'name':'Fish'}), headers={'Content-Type': 'application/json'})
+        data = json.loads(res.data)
+        
+        # test status code
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(data['message'], 'specie name is not acceptable')
     
     
     '''
         DELETE routes unittest
     '''  
+    '''
+        1- (specie) test delete specie by id
+    ''' 
+    #* test successful operation for deleting specie by id using DELETE /specie/<int:_id>
+    def test_200_delete_specie_byID(self):
 
+        self.create_temp_specie()
+
+        avalible_id = (Specie.query.first()).id 
+
+        res = self.client().delete('/specie/'+str(avalible_id))
+ 
+        # test status code
+        self.assertEqual(res.status_code, 200)
+
+    #! test unsuccessful operation for deleting specie by id out of boundary DELETE /specie/<int:_id>
+    def test_404_delete_specie_byID(self):
+
+        res = self.client().delete('/specie/8')
+ 
+        # test status code
+        self.assertEqual(res.status_code, 404)
+    
 
 
 # Make the tests conveniently executable
