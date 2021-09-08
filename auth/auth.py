@@ -1,4 +1,5 @@
-import json, os
+import json
+import os
 from flask import request, _request_ctx_stack
 from functools import wraps
 from jose import jwt
@@ -9,7 +10,7 @@ from urllib.request import urlopen
 # Permissions specified for all endpoints
 
 
-AUTH0_DOMAIN =  os.getenv('AUTH0_DOMAIN')
+AUTH0_DOMAIN = os.getenv('AUTH0_DOMAIN')
 ALGORITHMS = os.getenv('ALGORITHMS')
 API_AUDIENCE = os.getenv('API_AUDIENCE')
 
@@ -17,6 +18,7 @@ API_AUDIENCE = os.getenv('API_AUDIENCE')
 AuthError Exception
 A standardized way to communicate auth failure modes
 '''
+
 
 class AuthError(Exception):
     def __init__(self, error, status_code):
@@ -34,6 +36,7 @@ class AuthError(Exception):
     return the token part of the header
 '''
 
+
 def get_token_auth_header():
 
     # #* attempt to get the header from the request
@@ -50,12 +53,12 @@ def get_token_auth_header():
     if auth_header_parts[0].lower() != 'bearer':
         raise AuthError({
             'description': 'Authorization header must start with "Bearer"'
-            }, 401)
+        }, 401)
 
     elif len(auth_header_parts) != 2:
         raise AuthError({
             'description': 'Authorization header format is invalid'
-            }, 401)
+        }, 401)
 
     # #* return the token part of the header
     return auth_header_parts[1]
@@ -69,12 +72,13 @@ def get_token_auth_header():
         payload: decoded jwt payload
 
     it should raise an AuthError if permissions are not included in the payload
-        
+
         !!NOTE check your RBAC settings in Auth0
     it should raise an AuthError if the requested permission
      string is not in the payload permissions array
     return true otherwise
 '''
+
 
 def check_permissions(permission, payload):
     # #* raise an AuthError if permissions are not included in the payload
@@ -88,7 +92,7 @@ def check_permissions(permission, payload):
     return True
 
 
-''' 
+'''
     verify_decode_jwt(token) method
     -------------------------------------------
     @INPUTS
@@ -100,10 +104,11 @@ def check_permissions(permission, payload):
     it should validate the claims
 
     return the decoded payload
-    
+
     !!NOTE urlopen has a common certificate error described here:
     https://stackoverflow.com/questions/50236117/scraping-ssl-certificate-verify-failed-error-for-http-en-wikipedia-org
 '''
+
 
 def verify_decode_jwt(token):
     jsonurl = urlopen(f'https://{AUTH0_DOMAIN}/.well-known/jwks.json')
@@ -155,13 +160,12 @@ def verify_decode_jwt(token):
                 'description': 'Unable to parse authentication token.'
             }, 400)
     raise AuthError({
-                'code': 'invalid_header',
+        'code': 'invalid_header',
                 'description': 'Unable to find the appropriate key.'
-            }, 400)
+    }, 400)
 
 
-
-''' 
+'''
     @requires_auth(permission) decorator method
     -------------------------------------------
     1- use the get_token_auth_header method to get the token
@@ -171,6 +175,8 @@ def verify_decode_jwt(token):
     4- return the decorator which passes the decoded
         payload to the decorated method
 '''
+
+
 def requires_auth(permission=''):
     def requires_auth_decorator(f):
         @wraps(f)
@@ -182,4 +188,3 @@ def requires_auth(permission=''):
 
         return wrapper
     return requires_auth_decorator
-
