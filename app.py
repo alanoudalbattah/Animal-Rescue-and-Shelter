@@ -291,7 +291,8 @@ def create_app():
 
     try:
       new_interview.insert()
-    except: abort(400, description="interview already exists")
+    except: 
+       abort(400, description="interview already exists")
     
     return jsonify({"new_interview":new_interview.details()}), 201
   '''

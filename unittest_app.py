@@ -54,7 +54,7 @@ class AnimalShelter(unittest.TestCase):
         return self.client().post('/pet', data=json.dumps(
                   
         {
-            "breed": Breed.query.first().name,
+            "breed": (Breed.query.first()).name,
             "name": name,
             "image_link": "https://someImageURL.com",
             "age_in_months": 155,
@@ -64,6 +64,42 @@ class AnimalShelter(unittest.TestCase):
             "note": "Likes to sleep :) and play with lazerz :)"
         }
         
+        ), headers={'Content-Type': 'application/json'})
+
+    def create_temp_user(self, firstname=names.gen(), email=None):
+        lastname = names.gen()
+        if email is None:
+            email = firstname+lastname+"@gmail.com"
+        return self.client().post('/user', data=json.dumps(
+        {
+            "first_name":firstname,
+            "last_name":lastname,
+            "email":email,
+            "mobile": "054211111",
+            "age": 23
+        }
+        ), headers={'Content-Type': 'application/json'})
+
+
+    def create_temp_interview(self, pet_id=None, user_id=None):
+        
+        if pet_id is None:
+            self.create_temp_pet()
+            pet_id = (Pet.query.first()).id
+        if user_id is None:
+            self.create_temp_user()
+            user_id = (User.query.first()).id
+
+        return self.client().post('/interview', data=json.dumps(
+        {
+            "pet_id": pet_id,
+            "user_id": user_id,
+            "year": 2021,
+            "month": 2,
+            "day": 2,
+            "hour": 1,
+            "minute": 0
+        }
         ), headers={'Content-Type': 'application/json'})
 
     """
@@ -123,8 +159,6 @@ class AnimalShelter(unittest.TestCase):
         self.reset_database()
 
         res = self.create_temp_breed()
-
-        data = json.loads(res.data)
         
         # test status code and message
         self.assertEqual(res.status_code, 201)
@@ -140,11 +174,13 @@ class AnimalShelter(unittest.TestCase):
         self.assertEqual(res.status_code, 400)
     
     # '''
-    #     3- (pet) test creation of breed
+    #     3- (pet) test creation of pet
     # ''' 
     #* test successful operation for creating a pet using POST /pet
     def test_200_create_pet(self):
         
+        self.reset_database()
+
         all_pets_before = len(Pet.query.all())
 
         res = self.create_temp_pet()
@@ -167,22 +203,60 @@ class AnimalShelter(unittest.TestCase):
         
         # test status code and message
         self.assertEqual(res.status_code, 400)
-
+ 
     # '''
-    #     4-
+    #     4- (user) test creation of user
+    # ''' 
+    # #* test successful operation for creating a user using POST /user
+    def test_200_create_user(self):
+        all_users_before = len(User.query.all())
+
+        res = self.create_temp_user()
+
+        all_users_after = len(User.query.all())
+
+        # check if an inance is added on species table
+        self.assertTrue(all_users_after - all_users_before == 1)
+        
+        # test status code and message
+        self.assertEqual(res.status_code, 201)
+
+    # #! test unsuccessful operation for creating a user using POST /user
+    def test_400_create_user(self):
+        unique_user_email_conflict = "conflict@gmail.com"
+
+        self.create_temp_user(unique_user_email_conflict)
+
+        res = self.create_temp_user(unique_user_email_conflict)
+        
+        # test status code and message
+        self.assertEqual(res.status_code, 400)
+    # '''
+    #     5- (interview) test creation of interview
     # ''' 
     # #* test successful operation for creating an interview using POST /interview
-    # def test_200_create_interview(self):
-    #     all_interviews_before = len(Adoption_Interview.query.all())
-        
-    #     user = User()
-    #     pet = Pet()
-    #     interview_2b_created = Adoption_Interview("","","","")
+    def test_200_create_interview(self):
+
+        res = self.create_temp_interview()
+
+        # test status code and message
+        self.assertEqual(res.status_code, 201)
 
     # #! test unsuccessful operation for creating an interview using POST /interview
-    # def test_400_create_interview(self):
-    #     all_interviews_before = len(Adoption_Interview.query.all())
- 
+    def test_400_create_interview(self): 
+
+        self.create_temp_pet()
+        self.create_temp_user()
+        
+        conflict_pet_id = (Pet.query.first()).id
+        conflict_user_id = (User.query.first()).id
+
+        self.create_temp_interview(conflict_pet_id, conflict_user_id)
+
+        res = self.create_temp_interview(conflict_pet_id, conflict_user_id)
+        
+        # test status code and message
+        self.assertEqual(res.status_code, 400)
 
 
 
@@ -310,8 +384,6 @@ class AnimalShelter(unittest.TestCase):
     #* test successful operation for updating specie by id using PATCH /specie/<int:_id>
     def test_200_update_specie_byID(self):
         
-        self.create_temp_specie()
-
         avalible_id = (Specie.query.first()).id 
 
         res = self.client().patch('/specie/'+str(avalible_id), data=json.dumps({'name':'Dog'}), headers={'Content-Type': 'application/json'})
@@ -370,6 +442,8 @@ class AnimalShelter(unittest.TestCase):
     ''' 
     #* test successful operation for deleting specie by id using DELETE /specie/<int:_id>
     def test_200_delete_specie_byID(self):
+
+        self.create_temp_specie()
 
         avalible_id = (Specie.query.first()).id 
 

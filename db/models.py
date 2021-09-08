@@ -283,7 +283,7 @@ class Adoption_Interview(db.Model):
     
     date = db.Column(db.Date, nullable=False) # --> datetime.date() 
     # src: https://docs.python.org/3/library/datetime.html
-    time = db.Column(db.DateTime, nullable=False) # --> datetime.datetime() 
+    time = db.Column(db.Time, nullable=False) # --> datetime.datetime() 
     # src: https://docs.python.org/3/library/datetime.html
 
     ''' relationships '''
