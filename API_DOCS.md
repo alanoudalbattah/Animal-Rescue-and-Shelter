@@ -8,14 +8,12 @@ Here you can find the full documentation of the API Endpoints for Animal Rescue 
 
 <a name="Endpoints"></a>
 
-## Endpoints
-## `Get``/`
+## Endpoint `/`
 #### Behaviour: This endpoint don't perform any [CRUD](https://www.codecademy.com/articles/what-is-crud) operations on the database it just return a rendered template.
 #### Response: Status Code - 200 (OK)
 
-[`/interview`](#post-interview) [`/pet`](#post-pet) `` `` `` `` `` ``
-#### Behaviour: These endpoints perform [CRUD](https://www.codecademy.com/articles/what-is-crud) operations on the [PostgresSQL](https://www.postgresql.org/about/) database.
 
+## Endpoints
 CREATE Requests:
 1.  [`POST /specie`](#post-specie)
 1.  [`POST /breed`](#post-breed)
@@ -47,6 +45,7 @@ DELETE Requests:
 1. [`DELETE /pet/<int:_id>`](#del-pet-byid)
 1. [`DELETE /interview/<int:_id>`](#del-interview-byid)
 
+#### Behaviour: These endpoints perform [CRUD](https://www.codecademy.com/articles/what-is-crud) operations on the [PostgresSQL](https://www.postgresql.org/about/) database.
 # `POST`
 <a name="post-specie"></a>
 
