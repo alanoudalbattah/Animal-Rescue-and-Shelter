@@ -9,6 +9,37 @@ from db.models import (
  User, Adoption_Interview, 
  Specie, Breed, Pet,
 )
+from auth.auth import AuthError, requires_auth
+
+
+
+# from functools import wraps
+# import json
+# from os import environ as env
+# from werkzeug.exceptions import HTTPException
+
+# from dotenv import load_dotenv, find_dotenv
+# from flask import Flask
+# from flask import jsonify
+# from flask import redirect
+# from flask import render_template
+# from flask import session
+# from flask import url_for
+# from authlib.integrations.flask_client import OAuth
+# from six.moves.urllib.parse import urlencode
+
+
+
+# def requires_auth(f):
+#   @wraps(f)
+#   def decorated(*args, **kwargs):
+#     if 'profile' not in session:
+#       # Redirect to Login page here
+#       return redirect('/')
+#     return f(*args, **kwargs)
+
+#   return decorated
+
 
 def create_app():
   # create and configure the app
@@ -32,6 +63,75 @@ def create_app():
     # One PATCH request     ✔️
     # One DELETE request    ✔️
   
+
+
+
+  # oauth = OAuth(app)
+
+  # auth0 = oauth.register(
+  #     'auth0',
+  #     client_id='ceQ2QXcul85lqvr59eZvaaL0nDLE5V4J',
+  #     client_secret='YOUR_CLIENT_SECRET',
+  #     api_base_url='https://fsnd-class.us.auth0.com',
+  #     access_token_url='https://fsnd-class.us.auth0.com/oauth/token',
+  #     authorize_url='https://fsnd-class.us.auth0.com/authorize',
+  #     client_kwargs={
+  #         'scope': 'openid profile email',
+  #     },
+  # )
+  # # Auth routes
+  # # /server.py
+
+  # # Here we're using the /callback route.
+  # @app.route('/callback')
+  # def callback_handling():
+  #     # Handles response from token endpoint
+  #     auth0.authorize_access_token()
+  #     resp = auth0.get('userinfo')
+  #     userinfo = resp.json()
+
+  #     # Store the user information in flask session.
+  #     session['jwt_payload'] = userinfo
+  #     session['profile'] = {
+  #         'user_id': userinfo['sub'],
+  #         'name': userinfo['name'],
+  #         'picture': userinfo['picture']
+  #     }
+  #     return redirect('/dashboard')
+
+
+
+  # # /server.py
+
+  # @app.route('/login')
+  # def login():
+  #     return auth0.authorize_redirect(redirect_uri='/all-pets')
+
+
+
+
+  # @app.route('/logout')
+  # def logout():
+  #     # Clear session stored data
+  #     session.clear()
+  #     # Redirect user to logout endpoint
+  #     params = {'returnTo': url_for('home', _external=True), 'client_id': 'ceQ2QXcul85lqvr59eZvaaL0nDLE5V4J'}
+  #     return redirect(auth0.api_base_url + '/v2/logout?' + urlencode(params))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   ''' ALL ALL ALL ALL ALL ALL ALL ALL ALL ALL ALL ALL ALL ALL ALL ALL ALL ALL ALL ALL ALL ALL'''
   ''' Role --> All can view '''
@@ -215,8 +315,9 @@ def create_app():
   '''
   @TODO This Endpoint view all previous and upcomming interviews
   '''
-  @app.route('/all-Interviews', methods=['GET'])
-  def view_all_interviews():
+  @app.route('/all-interviews', methods=['GET'])
+  @requires_auth('get:all-interviews')
+  def view_all_interviews(payload):
     return jsonify({'all interviews': [Adoption_Interview.details(interview) for interview in Adoption_Interview.query.all()]}), 200
 
 
@@ -518,7 +619,9 @@ def create_app():
 
     # verify specie name
     # options possiple for now are either Dog or a Cat
-    if ["Cat","Dog"].index(specieName) == -1: abort(400, description='specie name is not acceptable')
+    acceptable_names_for_specie = ["Cat","Dog"]
+    if not (specieName in acceptable_names_for_specie): 
+      abort(400, description='specie name is not acceptable')
     
     newSpecie = Specie(specieName)
     
@@ -632,19 +735,19 @@ def create_app():
       }), 500
 
 
-  # '''
-  # @TODO implement error handler for AuthError
-  #     error handler should conform to general task above
-  # '''
-  # # src: https://auth0.com/docs/quickstart/backend/python/01-authorization
+  '''
+  @TODO implement error handler for AuthError
+      error handler should conform to general task above
+  '''
+  # src: https://auth0.com/docs/quickstart/backend/python/01-authorization
 
-  # @app.errorhandler(AuthError)
-  # def unprocessable(err):
-  #     return jsonify({
-  #         "success": False,
-  #         "error": err.status_code,
-  #         "message": err.error.get('description'),
-  #     }), err.status_code
+  @app.errorhandler(AuthError)
+  def unprocessable(err):
+      return jsonify({
+          "success": False,
+          "error": err.status_code,
+          "message": err.error.get('description'),
+      }), err.status_code
 
   return app
 

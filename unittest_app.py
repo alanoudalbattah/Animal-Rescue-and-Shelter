@@ -26,33 +26,31 @@ class AnimalShelter(unittest.TestCase):
             self.db = SQLAlchemy()
             self.db.init_app(self.app)
             # create all tables
+            self.db.drop_all()
             self.db.create_all()
         # src: Udacity's Travia Api Project
     
     def tearDown(self):
         pass
+         
     
-        
-
-
 
     """
-    TODO ✅
+    TODO 
     Write at least one test for each test for successful operation and for expected errors.
     """
     '''
         POST routes unittest
     ''' 
     '''
-        1- test creation of species can be ['Cat', 'Dog']
+        1- test creation of species can be ['Cat', 'Dog'] ✅
     ''' 
     #* test successful operation for creating a specie using POST /specie
     def test_200_create_specie(self):
 
         all_species_before = len(Specie.query.all())
 
-        specie_2b_created = {'specie':'Cat'}
-        res = self.client().get('/specie', json=specie_2b_created)
+        res = self.client().post('/specie', data=json.dumps({'specie':'Dog'}), headers={'Content-Type': 'application/json'})
         data = json.loads(res.data)
 
 
@@ -63,13 +61,14 @@ class AnimalShelter(unittest.TestCase):
         
         # test status code and message
         self.assertEqual(res.status_code, 201)
-        self.assertEqual(data['newSpecie'], True)
+        self.assertEqual(data['newSpecie'], {'id': 1, 'name': 'Dog'})
     
-    # #! test unsuccessful operation for creating a specie using POST /specie
+    #! test unsuccessful operation for creating a specie using POST /specie
     # def test_400_create_specie(self):
+
     #     all_species_before = len(Specie.query.all())
 
-    #     res = self.client().post('/specie', { "specie": "Cat" })
+    #     res = self.client().post('/specie', data=json.dumps({'specie':'Fish'}), headers={'Content-Type': 'application/json'})
     #     data = json.loads(res.data)
 
 
@@ -80,7 +79,7 @@ class AnimalShelter(unittest.TestCase):
         
     #     # test status code and message
     #     self.assertEqual(res.status_code, 400)
-    #     self.assertEqual(data['description'], True)
+    #     # self.assertEqual(data['message'], 'specie name is not acceptable')
     
     # '''
     #     2-
@@ -137,11 +136,11 @@ class AnimalShelter(unittest.TestCase):
         1-
     ''' 
     #* test successful operation for viewing all pets using GET /all-pets
-    def test_200_view_pets(self):
-        res = self.client().get('/all-pets')
-        data = json.loads(res.data)
+    # def test_200_view_pets(self):
+    #     res = self.client().get('/all-pets')
+    #     data = json.loads(res.data)
 
-        self.assertEqual(res.status_code, 200)
+    #     self.assertEqual(res.status_code, 200)
 
     # #! test unsuccessful operation for creating an interview using POST /interview
     # def test_404_view_pets(self):

@@ -6,8 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
  # [Optional but encouraged] One-to-many or many-to-many relationships between classes ✔️
  # src: https://docs.sqlalchemy.org/en/14/orm/basic_relationships.html for relationships :)
 
-database_name ='animal_shelter'
-database_path= "postgresql://{}:{}@{}/{}".format('postgres', 'postgres', 'localhost:5432', database_name)
+LOCAL_DATABASE_URL = "postgresql://{}:{}@{}/{}".format('postgres', 'postgres', 'localhost:5432', 'animal_shelter')
 
 db = SQLAlchemy()
 
@@ -15,13 +14,24 @@ db = SQLAlchemy()
 setup_db(app):
     binds a flask application and a SQLAlchemy service
 '''
-def setup_db(app, database_path=database_path):
+def setup_db(app, database_path=None):
 
     #? DATABASE_URL is the Heroku database URL, which will be generated with Heroku command and saved in setup.sh file
     #? With os.getenv(), if DATABASE_URL is empty, it will get default_data_path directly
-    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv('DATABASE_URL', database_path).replace("://", "ql://", 1)
-    #app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv('DATABASE_URL').replace("://", "ql://", 1)
+    #SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+    #! replaced due to deprecation in the changing of the dialect 
+    #src: https://stackoverflow.com/questions/66690321/flask-and-heroku-sqlalchemy-exc-nosuchmoduleerror-cant-load-plugin-sqlalchemy
+    heroku_postgres_path = os.getenv('DATABASE_URL')
+    if heroku_postgres_path != None:
+        app.config["SQLALCHEMY_DATABASE_URI"] = heroku_postgres_path.replace("://", "ql://", 1) 
+    # local database for the unit tests :) else default it to none so the local database for devolopment can be used 
+    elif database_path != None: 
+        app.config["SQLALCHEMY_DATABASE_URI"] = database_path   
+    else: app.config["SQLALCHEMY_DATABASE_URI"] = LOCAL_DATABASE_URL
+
+     # ---------------------------------------------------------------- 
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+     # ---------------------------------------------------------------- 
     
     db.app = app
     db.init_app(app)
@@ -160,7 +170,7 @@ class Breed(db.Model):
     # many --> 1..* not 0..*
 
     # Breed:Pet One-To-Many (1:M) Breed --> parent, Pet --> child.
-    pets = db.relationship("Pet", backref="breed_pet", cascade="all, delete")
+    # pets = db.relationship("Pet", backref="breed_pet", cascade="all, delete")
 
     def __init__(self, name, image_link):
         self.name = name
@@ -209,6 +219,7 @@ class Pet(db.Model):
     #* no need to implement anything here :)
     
     # Pet:Breed Many-To-One (M:1)  parent --> Pet, child --> Breed
+    # overlaps="breed_pet,pets if two relations are created
     breed_id = db.Column(db.Integer, db.ForeignKey('breed.id'), nullable=False)
     breed = db.relationship("Breed", backref="pet_breed")
     # many --> 1..* not 0..*
