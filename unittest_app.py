@@ -1,4 +1,5 @@
 import unittest, json
+import catnames as names
 from flask_sqlalchemy import SQLAlchemy
 from app import create_app
 from db.models import (
@@ -35,7 +36,17 @@ class AnimalShelter(unittest.TestCase):
         db_drop_and_create_all() 
 
     def create_temp_specie(self):
-        self.client().post('/specie', data=json.dumps({'specie':'Cat'}), headers={'Content-Type': 'application/json'})
+        return self.client().post('/specie', data=json.dumps({'specie':'Cat'}), headers={'Content-Type': 'application/json'})
+    
+    def create_temp_breed(self):
+        return self.client().post('/breed', data=json.dumps(
+                  
+        {
+            'specie': 'Cat',
+            'breed': names.gen()
+        }
+        
+        ), headers={'Content-Type': 'application/json'})
 
 
     """
@@ -55,7 +66,8 @@ class AnimalShelter(unittest.TestCase):
 
         all_species_before = len(Specie.query.all())
 
-        res = self.client().post('/specie', data=json.dumps({'specie':'Dog'}), headers={'Content-Type': 'application/json'})
+        res = self.create_temp_specie()
+
         data = json.loads(res.data)
 
 
@@ -66,7 +78,7 @@ class AnimalShelter(unittest.TestCase):
         
         # test status code and message
         self.assertEqual(res.status_code, 201)
-        self.assertEqual(data['newSpecie'], {'id': 1, 'name': 'Dog'})
+        self.assertEqual(data['newSpecie'], {'id': 1, 'name': 'Cat'})
     
     #! test unsuccessful operation for creating a specie using POST /specie
     def test_400_create_specie(self):
@@ -163,9 +175,9 @@ class AnimalShelter(unittest.TestCase):
         
         self.create_temp_specie()
         
-        avalible_id = (Specie.query.first()).id 
+        avalible_specie = (Specie.query.first())
 
-        res = self.client().get('/specie/'+str(avalible_id))
+        res = self.client().get('/specie/'+str(avalible_specie.id))
         
         # test status code
         self.assertEqual(res.status_code, 200)
@@ -205,14 +217,14 @@ class AnimalShelter(unittest.TestCase):
         
         self.create_temp_specie()
 
-        avalible_specie = Specie.query.one_or_none()
+        avalible_id = (Specie.query.first()).id 
 
-        res = self.client().patch('/specie/'+str(avalible_specie.id), data=json.dumps({'name':'Dog'}), headers={'Content-Type': 'application/json'})
+        res = self.client().patch('/specie/'+str(avalible_id), data=json.dumps({'name':'Dog'}), headers={'Content-Type': 'application/json'})
         data = json.loads(res.data)
         
         # test status code
         self.assertEqual(res.status_code, 200)
-        self.assertEqual(data['specie'],  {'id': avalible_specie.id, 'name':'Dog'} )
+        self.assertEqual(data['specie'],  {'id': avalible_id, 'name':'Dog'} )
 
     #! test unsuccessful operation for updating specie by id name not acceptable using  PATCH /specie/<int:_id>
     def test_400_update_specie_byID(self):
@@ -225,18 +237,44 @@ class AnimalShelter(unittest.TestCase):
         # test status code
         self.assertEqual(res.status_code, 400)
         self.assertEqual(data['message'], 'specie name is not acceptable')
+
+    '''
+        2- (breed) test update breed by id
+    ''' 
+    #* test successful operation for updating breed by id using PATCH /breed/<int:_id>
+    def test_200_update_breed_byID(self):
+        
+        self.create_temp_specie()
+        self.create_temp_breed()
+        
+
+        avalible_breed = Breed.query.first()
+        avalible_specie = Specie.query.first()
+
+        res = self.client().patch('/breed/'+str(avalible_breed.id), data=json.dumps({'specie_id':avalible_specie.id}), headers={'Content-Type': 'application/json'})        
+        data = json.loads(res.data)
+        
+        # test status code
+        self.assertEqual(res.status_code, 200)
+
+    #! test unsuccessful operation for updating (breed by id)'s atribute specie_id to an id out of boundary using PATCH /breed/<int:_id>
+    def test_400_update_breed_byID(self):
+
+        avalible_id = (Breed.query.first()).id 
+
+        res = self.client().patch('/breed/'+str(avalible_id), data=json.dumps({'specie_id':'8'}), headers={'Content-Type': 'application/json'})        
+        # test status code
+        self.assertEqual(res.status_code, 400)
     
     
     '''
         DELETE routes unittest
     '''  
     '''
-        1- (specie) test delete specie by id
+        1- (specie) test delete breed by id
     ''' 
     #* test successful operation for deleting specie by id using DELETE /specie/<int:_id>
     def test_200_delete_specie_byID(self):
-
-        self.create_temp_specie()
 
         avalible_id = (Specie.query.first()).id 
 
@@ -252,7 +290,28 @@ class AnimalShelter(unittest.TestCase):
  
         # test status code
         self.assertEqual(res.status_code, 404)
-    
+    '''
+        2- (breed) test delete specie by id
+    ''' 
+    #* test successful operation for deleting breed by id using DELETE /breed/<int:_id>
+    def test_200_delete_breed_byID(self):
+
+        self.create_temp_breed()
+
+        avalible_id = (Breed.query.first()).id 
+
+        res = self.client().delete('/breed/'+str(avalible_id))
+ 
+        # test status code
+        self.assertEqual(res.status_code, 200)
+
+    #! test unsuccessful operation for deleting breed by id out of boundary DELETE /breed/<int:_id>
+    def test_404_delete_breed_byID(self):
+
+        res = self.client().delete('/breed/8')
+ 
+        # test status code
+        self.assertEqual(res.status_code, 404)
 
 
 # Make the tests conveniently executable
