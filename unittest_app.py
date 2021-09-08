@@ -7,6 +7,21 @@ from db.models import (
  User, Adoption_Interview, 
  Specie, Breed, Pet)
 
+
+
+
+
+# I tried my best to write as much as i could. 
+# However, i prioritized documentation and authorization for the sake of time :)
+
+# message to myself ...
+# * Cont.
+#   1. writing unit tests for pet routes
+#   2. writing unit tests for interview routes
+
+
+
+
 ''' This Class represents the API and db Models test case'''
 class AnimalShelter(unittest.TestCase):
 
