@@ -369,7 +369,7 @@ Views a specific pet by id received from the params.
     }
 }
 ```
-<a name="get-interview-byid"></a>
+<a name="get-all-interviews"></a>
 
 ## 7. `GET` ```/all-interviews```
 
