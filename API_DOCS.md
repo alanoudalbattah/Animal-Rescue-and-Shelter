@@ -123,7 +123,7 @@ Creates a new interview.
 
 ### 1. `GET` ```/all-species```
 
-Views all species i.e. Cat and Dog 
+Views all species i.e. Cat and Dog
 
 #### Response: Status Code - 200 (OK)
 ```JSON
@@ -159,11 +159,12 @@ Views a specific specie by id received from the params.
 
 <a name="get-all-breeds"></a>
 
-### 3. `GET` ```/all-breeds```
+### 3. `GET` ```/all-breeds?page=${integer}```
 
-Views all breeds.
+Views all on a paginated set of breeds by given page. 
 
 #### Response: Status Code - 200 (OK)
+#### and an object with 10 paginated breeds
 ```JSON
 {
   "all breeds": [

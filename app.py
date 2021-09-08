@@ -652,19 +652,7 @@ def create_app():
   '''
   @app.route('/all-species', methods=['GET'])
   def view_all_specie():
-
-      #* Implement pagniation
-      page = request.args.get('page', 1, type=int)
-      start = (page - 1) * QUESTIONS_PER_PAGE
-      end = start + QUESTIONS_PER_PAGE
-
-
-      total_species = [Specie.details(s) for s in Specie.query.all()]
-      paginated_species = total_species[start:end]
-  
-      if (len(paginated_species)==0): abort(404) # abort if no questions were formatted (no need for a new page)!
-
-      return jsonify({'all species': paginated_species}), 200
+      return jsonify({'all species': [Specie.details(s) for s in Specie.query.all()]}), 200
   
 
   ''' 

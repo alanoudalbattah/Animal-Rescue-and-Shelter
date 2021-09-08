@@ -178,11 +178,10 @@ class AnimalShelter(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertTrue(len(data['all species']) != -1)
 
-    #! test unsuccessful operation for viewing out of pagination boundary all-species using GET /all-species
+    #! test unsuccessful operation for viewing all-species using GET /species
     def test_404_view_all_species(self):
         
-        res = self.client().get('/all-species?page=50')
-        data = json.loads(res.data)
+        res = self.client().get('/species')
 
         # test status code and message
         self.assertEqual(res.status_code, 404)
