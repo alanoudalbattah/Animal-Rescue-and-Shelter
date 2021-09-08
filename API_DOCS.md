@@ -46,9 +46,11 @@ DELETE Requests:
 1. [`DELETE /interview/<int:_id>`](#del-interview-byid)
 
 #### Behaviour: These endpoints perform [CRUD](https://www.codecademy.com/articles/what-is-crud) operations on the [PostgresSQL](https://www.postgresql.org/about/) database.
-# `POST`
+
+
 <a name="post-specie"></a>
 
+# POST
 ## 1. `POST` ```/specie```
 
 Creates a new specie i.e. a Cat.
@@ -193,7 +195,7 @@ Creates a new interview.
 }
 
 ```
-# `GET`
+# GET
 <a name="get-all-species"></a>
 
 ## 1. `GET` ```/all-species```
@@ -437,7 +439,7 @@ Views all interviews for a specific user specified by id received from the param
 ```
 
 
-# `PATCH`
+# PATCH
 <a name="pat-specie-byid"></a>
 
 ## 1. `PATCH` ```/specie/<int:_id>```
@@ -452,7 +454,6 @@ Updates a specific specie by id received from the params.
 ```
 #### Response: Status Code - 200 (OK)
 ```JSON
-{
 {
     "specie": {
         "id": 1,
@@ -544,7 +545,7 @@ Updates a specific interview by id received from the params.
 }
 ```
 
-# `DELETE`
+# DELETE
 <a name="del-specie-byid"></a>
 
 ## 1. `DELETE` ```/specie/<int:_id>```
