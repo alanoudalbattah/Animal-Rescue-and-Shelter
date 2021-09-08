@@ -8,8 +8,6 @@ __pycache__/*
 ######################
 *env
 .env
-setup.sh
-run.sh
 env
 
 

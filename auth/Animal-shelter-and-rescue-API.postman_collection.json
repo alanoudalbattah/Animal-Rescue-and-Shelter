@@ -1,0 +1,680 @@
+{
+	"info": {
+		"_postman_id": "276a46a2-0f31-4373-939b-821e7a9118b6",
+		"name": "Animal-shelter-and-rescue-API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "interview",
+					"item": [
+						{
+							"name": "create new interview",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"pet_id\": 2,\r\n    \"user_id\": 1,\r\n    \"year\": 2021,\r\n    \"month\": 2,\r\n    \"day\": 2,\r\n    \"hour\": 1,\r\n    \"minute\": 0\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:5000/interview",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"interview"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get interview details",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:5000/interview/25",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"interview",
+										"25"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get all interviews for a specific user",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:5000/interviews/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"interviews",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update interview date or time only for now",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"year\": 2021,\r\n    \"day\": 25,\r\n    \"hour\": 5\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:5000/interview/3",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"interview",
+										"3"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete an interview",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:5000/interview/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"interview",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "pet",
+					"item": [
+						{
+							"name": "pet details",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:5000/pet/8",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"pet",
+										"8"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"first_name\":\"alanoud\",\r\n    \"last_name\":\"albattah\",\r\n    \"email\":\"alanoudalbattah@outlook.com\",\r\n    \"mobile\": \"054211111\",\r\n    \"age\": 23\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/user",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjkydjQ2dGg2Z1JGUUVjN2swQWZHdCJ9.eyJpc3MiOiJodHRwczovL2ZzbmQtY2xhc3MudXMuYXV0aDAuY29tLyIsInN1YiI6ImF1dGgwfDYxMzJmODJjM2YyMzYyMDA2OTRlNDk5OSIsImF1ZCI6ImRldmVsb3BlciIsImlhdCI6MTYzMTExNDAxMywiZXhwIjoxNjMxMTIxMjEzLCJhenAiOiJjZVEyUVhjdWw4NWxxdnI1OWVadmFhTDBuRExFNVY0SiIsInNjb3BlIjoiIiwicGVybWlzc2lvbnMiOlsiZGVsZXRlOmludGVydmlldyIsImdldDppbnRlcnZpZXciLCJnZXQ6aW50ZXJ2aWV3cyIsImdldDpwZXQiLCJwYXRjaDppbnRlcnZpZXciLCJwb3N0OmludGVydmlldyJdfQ.a0C_YYxAxsiN6umnzHANSDuM41OAWmEnDuTZeNJcxW48-ClTSR87K762VeTej7MrQks2mUGUToC1Ld82scq2MpgedBOhFQdo3KSw30922vAaLi8eR9lLAaHCcjcMxo_XZUyFpPk4apnDfON8BsaZNhrOOSVvI423AOIOtg4g4BMdsa2DacU04toxyWcohnyusYI65F_fpwRveGH_eeDyuxHA8eu1elma07vbZudtNlgspVAGUNowow332ZCYMKAbdXd4b4Wa5VizkOhD8vpkKGpMJKJdTyqTpN9VuUsmwFEjOR5yqlLCoPwfKxt8PMm-9tROBhKudSQcyjQFS4Ub-w&",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Manager",
+			"item": [
+				{
+					"name": "specie",
+					"item": [
+						{
+							"name": "create a new specie",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"specie\":\"Dog\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:5000/specie",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"specie"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "view all-species",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:5000/all-species",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"all-species"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "view specie by id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:5000/specie/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"specie",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update a specie",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\":\"Dog\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:5000/specie/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"specie",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete a specie",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:5000/specie/2",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"specie",
+										"2"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "breed",
+					"item": [
+						{
+							"name": "create a new breed",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"specie\":\"Cat\",\r\n    \"breed\":\"Long Hair\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:5000/breed",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"breed"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "view all-breeds",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:5000/all-breeds",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"all-breeds"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "view breed by id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:5000/breed/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"breed",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update a breed",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"specie_id\":\"1\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:5000/breed/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"breed",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete a breed",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:5000/breed/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"breed",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "pet",
+					"item": [
+						{
+							"name": "create a new pet",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjkydjQ2dGg2Z1JGUUVjN2swQWZHdCJ9.eyJpc3MiOiJodHRwczovL2ZzbmQtY2xhc3MudXMuYXV0aDAuY29tLyIsInN1YiI6ImF1dGgwfDYxMzJmN2VhN2I4ZTNhMDA2OWZlNTY2NiIsImF1ZCI6ImRldmVsb3BlciIsImlhdCI6MTYzMTExNDc2MSwiZXhwIjoxNjMxMTIxOTYxLCJhenAiOiJjZVEyUVhjdWw4NWxxdnI1OWVadmFhTDBuRExFNVY0SiIsInNjb3BlIjoiIiwicGVybWlzc2lvbnMiOlsiZGVsZXRlOmJyZWVkIiwiZGVsZXRlOmludGVydmlldyIsImRlbGV0ZTpwZXQiLCJkZWxldGU6c3BlY2llIiwiZ2V0OmFsbC1hZG9wdGVkLXBldHMiLCJnZXQ6YWxsLWJyZWVkcyIsImdldDphbGwtSW50ZXJ2aWV3cyIsImdldDphbGwtc3BlY2llcyIsImdldDppbnRlcnZpZXciLCJnZXQ6aW50ZXJ2aWV3cyIsImdldDpwZXQiLCJnZXQ6cGV0cy1kZXRhaWwiLCJwYXRjaDpicmVlZCIsInBhdGNoOmludGVydmlldyIsInBhdGNoOnBldCIsInBhdGNoOnNwZWNpZSIsInBvc3Q6YnJlZWQiLCJwb3N0OmludGVydmlldyIsInBvc3Q6cGV0IiwicG9zdDpzcGVjaWUiXX0.ZKzSHBEexprZdqXGu6I0cg8ygmmw6fGbomHFQt7qt5LAuAncMqeFd4VSDCcTjbTB1AXKJ_iCDy_tYbYfv34scxCYy9AwDwmRaK7MskyFgb4ZqrnkfbZXAAUZNNcndeAicQvU4HPT8q4RDGZd61lhB21tEhOnz21_De3HsdcjK0suIaSR10BkBhGw6ziKyUmPXnlrtoPxlHJK_yRin4HXN1bwPaBu2HBDLl-oEAi_DNdvrZIquGECxyy8ELfduLyGcHt4gEHn_-S98I1x0BJtsZCGketxuzG1nttaGYGqYpIuDnUPZe76urHj4mjK-7hrbin58LNm4dm8XrZKSIcKWg",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"breed\": \"Himalayan\",\r\n    \"name\": \"Bompaaaa\",\r\n    \"image_link\": \"https://someImageURL.com\",\r\n    \"age_in_months\": 300,\r\n    \"gender\": \"male\",\r\n    \"vaccinated\": true,\r\n    \"letter_box_trained\": true\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:5000/pet",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"pet"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "pet details Copy",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:5000/pet/3",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"pet",
+										"3"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update a pet information",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"breed\": \"Rag Doll\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:5000/pet/2",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"pet",
+										"2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete a pet information",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:5000/pet/4",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"pet",
+										"4"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "interview",
+					"item": [
+						{
+							"name": "view all previous and upcomming interviews",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjkydjQ2dGg2Z1JGUUVjN2swQWZHdCJ9.eyJpc3MiOiJodHRwczovL2ZzbmQtY2xhc3MudXMuYXV0aDAuY29tLyIsInN1YiI6ImF1dGgwfDYxMzJmN2VhN2I4ZTNhMDA2OWZlNTY2NiIsImF1ZCI6ImRldmVsb3BlciIsImlhdCI6MTYzMTExNDc2MSwiZXhwIjoxNjMxMTIxOTYxLCJhenAiOiJjZVEyUVhjdWw4NWxxdnI1OWVadmFhTDBuRExFNVY0SiIsInNjb3BlIjoiIiwicGVybWlzc2lvbnMiOlsiZGVsZXRlOmJyZWVkIiwiZGVsZXRlOmludGVydmlldyIsImRlbGV0ZTpwZXQiLCJkZWxldGU6c3BlY2llIiwiZ2V0OmFsbC1hZG9wdGVkLXBldHMiLCJnZXQ6YWxsLWJyZWVkcyIsImdldDphbGwtSW50ZXJ2aWV3cyIsImdldDphbGwtc3BlY2llcyIsImdldDppbnRlcnZpZXciLCJnZXQ6aW50ZXJ2aWV3cyIsImdldDpwZXQiLCJnZXQ6cGV0cy1kZXRhaWwiLCJwYXRjaDpicmVlZCIsInBhdGNoOmludGVydmlldyIsInBhdGNoOnBldCIsInBhdGNoOnNwZWNpZSIsInBvc3Q6YnJlZWQiLCJwb3N0OmludGVydmlldyIsInBvc3Q6cGV0IiwicG9zdDpzcGVjaWUiXX0.ZKzSHBEexprZdqXGu6I0cg8ygmmw6fGbomHFQt7qt5LAuAncMqeFd4VSDCcTjbTB1AXKJ_iCDy_tYbYfv34scxCYy9AwDwmRaK7MskyFgb4ZqrnkfbZXAAUZNNcndeAicQvU4HPT8q4RDGZd61lhB21tEhOnz21_De3HsdcjK0suIaSR10BkBhGw6ziKyUmPXnlrtoPxlHJK_yRin4HXN1bwPaBu2HBDLl-oEAi_DNdvrZIquGECxyy8ELfduLyGcHt4gEHn_-S98I1x0BJtsZCGketxuzG1nttaGYGqYpIuDnUPZe76urHj4mjK-7hrbin58LNm4dm8XrZKSIcKWg",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:5000/all-interviews",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"all-interviews"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjkydjQ2dGg2Z1JGUUVjN2swQWZHdCJ9.eyJpc3MiOiJodHRwczovL2ZzbmQtY2xhc3MudXMuYXV0aDAuY29tLyIsInN1YiI6ImF1dGgwfDYxMzJmN2VhN2I4ZTNhMDA2OWZlNTY2NiIsImF1ZCI6ImRldmVsb3BlciIsImlhdCI6MTYzMTExNDc2MSwiZXhwIjoxNjMxMTIxOTYxLCJhenAiOiJjZVEyUVhjdWw4NWxxdnI1OWVadmFhTDBuRExFNVY0SiIsInNjb3BlIjoiIiwicGVybWlzc2lvbnMiOlsiZGVsZXRlOmJyZWVkIiwiZGVsZXRlOmludGVydmlldyIsImRlbGV0ZTpwZXQiLCJkZWxldGU6c3BlY2llIiwiZ2V0OmFsbC1hZG9wdGVkLXBldHMiLCJnZXQ6YWxsLWJyZWVkcyIsImdldDphbGwtSW50ZXJ2aWV3cyIsImdldDphbGwtc3BlY2llcyIsImdldDppbnRlcnZpZXciLCJnZXQ6aW50ZXJ2aWV3cyIsImdldDpwZXQiLCJnZXQ6cGV0cy1kZXRhaWwiLCJwYXRjaDpicmVlZCIsInBhdGNoOmludGVydmlldyIsInBhdGNoOnBldCIsInBhdGNoOnNwZWNpZSIsInBvc3Q6YnJlZWQiLCJwb3N0OmludGVydmlldyIsInBvc3Q6cGV0IiwicG9zdDpzcGVjaWUiXX0.ZKzSHBEexprZdqXGu6I0cg8ygmmw6fGbomHFQt7qt5LAuAncMqeFd4VSDCcTjbTB1AXKJ_iCDy_tYbYfv34scxCYy9AwDwmRaK7MskyFgb4ZqrnkfbZXAAUZNNcndeAicQvU4HPT8q4RDGZd61lhB21tEhOnz21_De3HsdcjK0suIaSR10BkBhGw6ziKyUmPXnlrtoPxlHJK_yRin4HXN1bwPaBu2HBDLl-oEAi_DNdvrZIquGECxyy8ELfduLyGcHt4gEHn_-S98I1x0BJtsZCGketxuzG1nttaGYGqYpIuDnUPZe76urHj4mjK-7hrbin58LNm4dm8XrZKSIcKWg",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "http://localhost:5000/ check health status",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "view all-pets",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/all-pets",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"all-pets"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
