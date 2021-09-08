@@ -51,10 +51,10 @@ class User(db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     
-    first_name = db.Column(db.String, nullable=False, unique=True)
-    last_name = db.Column(db.String, nullable=False, unique=True)
-    email = db.Column(db.String(120))
-    mobile = db.Column(db.String(120))
+    first_name = db.Column(db.String, nullable=False)
+    last_name = db.Column(db.String, nullable=False)
+    email = db.Column(db.String(120), nullable=False, unique=True)
+    mobile = db.Column(db.String(120), nullable=False, unique=True)
     age = db.Column(db.String(120), nullable=False)
 
     ''' relationship '''
@@ -206,7 +206,7 @@ class Pet(db.Model):
     __tablename__ = 'pet'
     id = db.Column(db.Integer, primary_key=True)
     
-    name = db.Column(db.String(120), nullable=False)
+    name = db.Column(db.String(120), nullable=False, unique=True)
     image_link = db.Column(db.String(500), nullable=False)
     age_in_months = db.Column(db.Integer, nullable=False)
     gender = db.Column(db.String(120), nullable=False)

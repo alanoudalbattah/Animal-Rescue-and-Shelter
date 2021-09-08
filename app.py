@@ -48,7 +48,6 @@ def create_app():
   setup_db(app)
   CORS(app)
   Migrate(app, db)
-
   
   """ uncomment at the first time running the app """
   #db_drop_and_create_all()
@@ -120,6 +119,46 @@ def create_app():
   #     return redirect(auth0.api_base_url + '/v2/logout?' + urlencode(params))
 
 
+  '''
+  @TODO This Endpoint Creates a new user 
+        #! Auth0 ?
+        - body
+  {
+      "first_name":"alanoud",
+      "last_name":"albattah",
+      "email":"alanoudalbattah@outlook.com",
+      "mobile": "054211111",
+      "age": 23
+  }
+  '''
+  @app.route('/user', methods=['POST'])
+  def create_user():
+
+    body = request.get_json()
+
+    # required pet informations
+    required_data = [
+      body.get('email'),
+      body.get('mobile')
+      ]
+    
+    # checks if all required fields are present
+    for required in required_data: 
+      if (required == None): abort(400, description='required feild is missing') 
+
+    
+    newUser = User(
+      body.get('first_name'),
+      body.get('last_name'),
+      required_data[0],
+      required_data[1],
+      body.get('age')
+      )
+  
+    try: newUser.insert()
+    except: abort(400, description='constraint violation could not be created')
+    
+    return jsonify({"details":User.query.get(newUser.id).details()}), 201
 
 
 
@@ -138,7 +177,19 @@ def create_app():
   ''' Role --> All can view '''
   @app.route('/all-pets', methods=['GET'])
   def view_all_pets():
-    return jsonify({'pets': [pet.details() for pet in Pet.query.all()]}), 200
+    
+      #* Implement pagniation
+      page = request.args.get('page', 1, type=int)
+      start = (page - 1) * QUESTIONS_PER_PAGE
+      end = start + QUESTIONS_PER_PAGE
+
+      total_pets = [p.details() for p in Pet.query.all()]
+      paginated_pets = total_pets[start:end]
+
+      if (len(paginated_pets)==0): abort(404) # abort if no questions were formatted (no need for a new page)!
+
+      return jsonify({'pets': paginated_pets}), 200
+
   ''' Role --> All can search '''
   #! This route is not functional or implemented in the maintime
   #! left undeleted for future implementations. :)
@@ -317,8 +368,8 @@ def create_app():
   @TODO This Endpoint view all previous and upcomming interviews
   '''
   @app.route('/all-interviews', methods=['GET'])
-  @requires_auth('get:all-interviews')
-  def view_all_interviews(payload):
+  #@requires_auth('get:all-interviews')
+  def view_all_interviews():#payload
     return jsonify({'all interviews': [Adoption_Interview.details(interview) for interview in Adoption_Interview.query.all()]}), 200
 
 

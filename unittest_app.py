@@ -49,6 +49,22 @@ class AnimalShelter(unittest.TestCase):
         
         ), headers={'Content-Type': 'application/json'})
 
+    def create_temp_pet(self, name=names.gen()):
+        self.create_temp_breed()
+        return self.client().post('/pet', data=json.dumps(
+                  
+        {
+            "breed": Breed.query.first().name,
+            "name": name,
+            "image_link": "https://someImageURL.com",
+            "age_in_months": 155,
+            "gender": "female",
+            "vaccinated": True,
+            "letter_box_trained": True,
+            "note": "Likes to sleep :) and play with lazerz :)"
+        }
+        
+        ), headers={'Content-Type': 'application/json'})
 
     """
     TODO 
@@ -119,26 +135,38 @@ class AnimalShelter(unittest.TestCase):
         breed_name_taken = (Breed.query.first()).name
 
         res = self.create_temp_breed(breed_name_taken)
-
-        data = json.loads(res.data)
         
         # test status code and message
         self.assertEqual(res.status_code, 400)
     
     # '''
-    #     3-
+    #     3- (pet) test creation of breed
     # ''' 
-    # #* test successful operation for creating a pet using POST /pet
-    # def test_200_create_pet(self):
-    #     all_interviews_before = len(Adoption_Interview.query.all())
+    #* test successful operation for creating a pet using POST /pet
+    def test_200_create_pet(self):
         
-    #     user = User()
-    #     pet = Pet()
-    #     interview_2b_created = Adoption_Interview("","","","")
+        all_pets_before = len(Pet.query.all())
 
-    # #! test unsuccessful operation for creating a pet using POST /pet
-    # def test_400_create_pet(self):
-    #     all_interviews_before = len(Adoption_Interview.query.all())
+        res = self.create_temp_pet()
+
+        all_pets_after = len(Pet.query.all())
+
+        # check if an inance is added on species table
+        self.assertTrue(all_pets_after - all_pets_before == 1)
+        
+        # test status code and message
+        self.assertEqual(res.status_code, 201)
+
+
+    #! test unsuccessful operation for creating a pet using POST /pet
+    def test_400_create_pet(self):
+        
+        self.create_temp_pet('Kitkat')
+
+        res = self.create_temp_pet('Kitkat')
+        
+        # test status code and message
+        self.assertEqual(res.status_code, 400)
 
     # '''
     #     4-
