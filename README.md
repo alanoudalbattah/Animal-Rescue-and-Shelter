@@ -1,7 +1,7 @@
 # Animal Rescue and Shelter - Capstone Project
 This project is the Capstone project for the `Udacity Full-Stack Developer Nanodegree` Program.
 
-Concepts and the skills summrized by udacity: 
+Concepts and the skills summarized by udacity: 
 * Coding in Python 3
 * Relational Database Architecture
 * Modeling Data Objects with SQLAlchemy
@@ -29,7 +29,7 @@ Concepts and the skills summrized by udacity:
 <a name="Overview"></a>
 
 ## Overview
-Animal Rescue and Shelter enables its users to look for the perfect friend (a cat or a dog to adopt) for the perfect home (users of the website). It eases the process of booking an interview with the shelter and searching for a pet to adopt. And its encorges its users to adopt rescued pets.
+This Project enables its users to look for the perfect friend (a cat or a dog to adopt) for the perfect home (users of the website). It eases the process of booking an interview with the shelter and searching for a pet to adopt. And it encourages its users to adopt rescued pets.
 
 The shelter website is designed to cover one city and all process after the interview is not included in the scope of this project.
 
